@@ -4,9 +4,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class AppStarter {
+public class CloudTerminal {
 
 	public static void main(String[] args) {
-		SpringApplication.run(AppStarter.class, args);
+		SpringApplication.run(CloudTerminal.class, args);
 	}
 }
