@@ -42,18 +42,47 @@
         </dependency>
 
         <dependency>
-            <groupId>com.kodedu.pty4j</groupId>
-            <artifactId>pty4j</artifactId>
-            <version>0.7.4</version>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna</artifactId>
+            <version>4.1.0</version>
         </dependency>
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna-platform</artifactId>
+            <version>4.1.0</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.jetbrains.pty4j/purejavacomm -->
+        <dependency>
+            <groupId>org.jetbrains.pty4j</groupId>
+            <artifactId>purejavacomm</artifactId>
+            <version>0.0.11.1</version>
+        </dependency>
+
+<!--        <dependency>-->
+<!--            <groupId>com.sparetimelabs</groupId>-->
+<!--            <artifactId>purejavacomm</artifactId>-->
+<!--            <version>0.0.17</version>-->
+<!--        </dependency>-->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.10</version>
+            <scope>test</scope>
+        </dependency>
+
+<!--        <dependency>-->
+<!--            <groupId>com.kodedu.pty4j</groupId>-->
+<!--            <artifactId>pty4j</artifactId>-->
+<!--            <version>0.7.4</version>-->
+<!--        </dependency>-->
 
     </dependencies>
 
     <repositories>
-        <repository>
-            <id>pty4j-releases</id>
-            <url>https://github.com/javaterminal/pty4j/raw/master/releases</url>
-        </repository>
+<!--        <repository>-->
+<!--            <id>pty4j-releases</id>-->
+<!--            <url>https://github.com/javaterminal/pty4j/raw/master/releases</url>-->
+<!--        </repository>-->
     </repositories>
 
     <build>
@@ -65,27 +94,27 @@
                     <finalName>cloudterm</finalName>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>com.google.cloud.tools</groupId>
-                <artifactId>jib-maven-plugin</artifactId>
-                <version>3.1.4</version>
-                <configuration>
-                    <from>
-                        <image>openjdk:17-jdk-alpine</image>
-                    </from>
-                    <to>
-                        <image>rahmanusta/${project.artifactId}:latest</image>
-                    </to>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>dockerBuild</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>com.google.cloud.tools</groupId>-->
+<!--                <artifactId>jib-maven-plugin</artifactId>-->
+<!--                <version>3.1.4</version>-->
+<!--                <configuration>-->
+<!--                    <from>-->
+<!--                        <image>openjdk:17-jdk-alpine</image>-->
+<!--                    </from>-->
+<!--                    <to>-->
+<!--                        <image>rahmanusta/${project.artifactId}:latest</image>-->
+<!--                    </to>-->
+<!--                </configuration>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <phase>package</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>dockerBuild</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
         </plugins>
     </build>
 
