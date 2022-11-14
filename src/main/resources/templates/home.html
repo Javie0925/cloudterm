@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="css/xterm.min.css" rel="stylesheet" type="text/css"/>
+    <link href="css/fullscreen.min.css" rel="stylesheet" type="text/css"/>
+    <link rel="shortcut icon" href="favicon.png">
+    <title>Cloud Terminal</title>
+
+    <link rel="stylesheet" href="js/layui/css/layui.css" media="all">
+    <script src="js/layui/layui.js"></script>
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/xterm.min.js"></script>
+    <script src="js/fullscreen.min.js"></script>
+    <script src="js/main.js"></script>
+</head>
+<body>
+<h2 style="position: fixed;z-index: 10000;color: white;top: 2%;right: 2%;">Cloud Terminal</h2>
+<div id="terminal"></div>
+<script>
+    layui.use(['util'], function () {
+        let util = layui.util, $ = layui.$, layer = layui.layer;
+        //fixbar
+        util.fixbar({
+            bar1: true
+            , bar2: false
+            , icon1: 'layui-icon-layer'
+            , icon2: 'layui-icon-tabs'
+            , css: {right: 50, bottom: 100}
+            , bgcolor: '#c15050'
+            , click: function (type) {
+                if (type === 'bar1') {
+
+                    var that = this;
+                    //多窗口模式，层叠置顶
+                    layer.open({
+                        type: 2 //page
+                        ,title: 'Server List'
+                        ,area: ['390px', '260px']
+                        ,shade:  [0.8, '#393D49']
+                        ,maxmin: true
+                        // ,offset: [ //为了演示，随机坐标
+                        //     Math.random()*($(window).height()-300)
+                        //     ,Math.random()*($(window).width()-390)
+                        // ]
+                        ,content: '/?page=serverList'
+                        //,btn: ['继续弹出', '全部关闭'] //只是为了演示
+                        // ,yes: function(){
+                        //     $(that).click();
+                        // }
+                        // ,btn2: function(){
+                        //     layer.closeAll();
+                        // }
+
+                        ,zIndex: layer.zIndex //重点1
+                        ,success: function(layero, index){
+                            layer.setTop(layero); //重点2. 保持选中窗口置顶
+
+                            //记录索引，以便按 esc 键关闭。事件见代码最末尾处。
+                            layer.escIndex = layer.escIndex || [];
+                            layer.escIndex.unshift(index);
+                            //选中当前层时，将当前层索引放置在首位
+                            layero.on('mousedown', function(){
+                                var _index = layer.escIndex.indexOf(index);
+                                if(_index !== -1){
+                                    layer.escIndex.splice(_index, 1); //删除原有索引
+                                }
+                                layer.escIndex.unshift(index); //将索引插入到数组首位
+                            });
+                        }
+                        ,end: function(){
+                            //更新索引
+                            if(typeof layer.escIndex === 'object'){
+                                layer.escIndex.splice(0, 1);
+                            }
+                        }
+                    });
+                } else if (type === 'bar2') {
+                    layer.msg('两个 bar 都可以设定是否开启')
+                }
+            }
+        });
+
+        //多窗口模式 - esc 键
+        $(document).on('keyup', function(e){
+            if(e.keyCode === 27){
+                layer.close(layer.escIndex ? layer.escIndex[0] : 0);
+            }
+        });
+    });
+</script>
+</body>
+</html>

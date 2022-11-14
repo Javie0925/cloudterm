@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="css/xterm.min.css" rel="stylesheet" type="text/css"/>
+    <link href="css/fullscreen.min.css" rel="stylesheet" type="text/css"/>
+    <link rel="shortcut icon" href="favicon.png">
+    <title>Server List</title>
+
+    <link rel="stylesheet" href="js/layui/css/layui.css" media="all">
+    <script src="js/layui/layui.js"></script>
+
+</head>
+<body>
+<div class="row mt-0 p-0 m-0">
+    <!--sheet nav-->
+    <div class="layui-tab layui-tab-card layui-bg-gray  border rounded-4">
+        <ul class="layui-tab-title mb-0" id="areaTab">
+        </ul>
+        <div class="layui-tab-content py-0">
+            <div class="layui-tab-item layui-show">
+                <table class="layui-hide" id="serverList" lay-filter="serverList"></table>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="toolbar">
+    <a class="layui-btn layui-btn-xs layui-btn-warm text-decoration-none" lay-event="handle">Edit</a>
+    <a class="layui-btn layui-btn-xs text-decoration-none" lay-event="history">Delete</a>
+</script>
+<script>
+    layui.use(['table'], function () {
+        let table = layui.table, $ = layui.$, layer = layui.layer;
+        table.render({
+            elem: '#serverList' // table id
+            , url: '/serverList'
+            , skin: 'line'
+            //, where: batchTableWhere
+            , method: 'post' //如果无需自定义HTTP类型，可不加该参数
+            , request: {
+                pageName: 'pageNo',
+                limitName: 'pageSize'
+            } //如果无需自定义请求参数，可不加该参数
+            //response: {} //如果无需自定义数据响应名称，可不加该参数
+            , contentType: 'application/json'
+            , defaultToolbar: false
+            , title: ''
+            , height: 'full'
+            //, parseData: globalParseData
+            , cols: [[
+                {field: 'title', title: 'Title', align: 'center'}
+                , {field: 'host', title: 'Host', align: 'center'/*, templet: "<span>" + farmName + "</span>"*/}
+                , {fixed: 'right', title: 'Operate', toolbar: '#toolbar', align: 'center'}
+            ]]
+            //, page: globalPageOption
+            //, data: [{}]
+            //数据加载完成后重新向父页面发送页面高度
+            // , done: function (res, curr, count) {
+            //     sendHeight();
+            // }
+        })
+
+        //多窗口模式 - esc 键
+        $(document).on('keyup', function(e){
+            if(e.keyCode === 27){
+                layer.close(layer.escIndex ? layer.escIndex[0] : 0);
+            }
+        });
+    });
+</script>
+</body>
+</html>

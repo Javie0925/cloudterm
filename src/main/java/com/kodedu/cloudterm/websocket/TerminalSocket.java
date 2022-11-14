@@ -4,14 +4,17 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kodedu.cloudterm.service.TerminalService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class TerminalSocket extends TextWebSocketHandler {
 
@@ -24,6 +27,18 @@ public class TerminalSocket extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+        String query = session.getUri().getQuery();
+        // get queryMap
+        Map<String, String> queryMap = null;
+        if (StringUtils.hasLength(query)) {
+            queryMap =
+                    Arrays.stream(query.split("&"))
+                            .map(str -> {
+                                String[] pair = str.split("=");
+                                return Arrays.asList(pair[0], pair[1]);
+                            })
+                            .collect(Collectors.toMap(list -> list.get(0), list -> list.get(1)));
+        }
         terminalService.setWebSocketSession(session);
         super.afterConnectionEstablished(session);
     }
@@ -75,7 +90,7 @@ public class TerminalSocket extends TextWebSocketHandler {
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         try {
             session.close();
-        }finally {
+        } finally {
             terminalService.onTerminalClose();
         }
     }
