@@ -24,6 +24,9 @@ public class Result {
         return new Result(SUCCESS_CODE, null, data);
     }
 
+    public static Result fail(String error) {
+        return new Result(500, error, null);
+    }
 
 
 }

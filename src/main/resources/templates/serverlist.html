@@ -51,10 +51,16 @@
 
         //listen table item modification
         table.on('edit(serverList)', function (obj) {
-            var value = obj.value //new value
-                , data = obj.data //all data of the row
-                , field = obj.field; //field
-            layer.msg(value);
+            let data = obj.data //all data of the row
+            $.ajax("/server", {
+                type: "post",
+                data: data,
+                success: function (data) {
+                    if (data.code != 0) {
+                        layer.msg(data.error);
+                    }
+                }
+            })
         });
 
         $(document).on('keyup', function (e) {

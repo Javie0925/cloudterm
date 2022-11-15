@@ -10,10 +10,15 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import java.io.*;
-import java.net.URL;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -21,24 +26,39 @@ import java.util.stream.Collectors;
 @Repository
 public class ServerListDao {
 
-    private URL serverListUrl;
-    private FileOutputStream serverListFileOutputStream;
+    private static final String filePath = System.getProperty("serverList.filepath");
+
     private Map<String, Server> serverMap = new ConcurrentHashMap<>();
+
+    private boolean hasFile = true;
+
     private File serverListFile;
 
     @PostConstruct
-    public void init() throws IOException {
-        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("serverList.json");
-        byte[] bytes = new byte[inputStream.available()];
-        inputStream.read(bytes);
-        serverListUrl = this.getClass().getClassLoader().getResource("serverList.json");
-        serverListFile = new File(serverListUrl.getPath());
-        serverListFileOutputStream = new FileOutputStream(serverListFile);
-        List<Server> serverList = JSON.parseObject(new String(bytes), new TypeReference<>() {
-        });
-        if (!CollectionUtils.isEmpty(serverList)) {
-            Map<String, Server> map = serverList.stream().collect(Collectors.toMap(s -> s.getId(), s -> s));
-            serverMap = new ConcurrentHashMap<>(map);
+    public void init() {
+        try {
+            if (!StringUtils.hasLength(filePath)) {
+                hasFile = false;
+                return;
+            }
+            serverListFile = new File(filePath);
+            if (!serverListFile.exists()) {
+                serverListFile.createNewFile();
+            }
+            FileInputStream fileInputStream = new FileInputStream(serverListFile);
+            if (fileInputStream.available() > 0) {
+                byte[] bytes = new byte[fileInputStream.available()];
+                fileInputStream.read(bytes);
+                List<Server> serverList = JSON.parseObject(new String(bytes, StandardCharsets.UTF_8), new TypeReference<List<Server>>() {
+                });
+                if (!CollectionUtils.isEmpty(serverList)) {
+                    serverList.stream().forEach(s->serverMap.put(s.getId(),s));
+                }
+            }
+
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            hasFile = false;
         }
     }
 
@@ -57,28 +77,28 @@ public class ServerListDao {
     }
 
     public void upsert(Server server) {
-        if (StringUtils.hasLength(server.getId())){
-            serverMap.put(server.getId(),server);
+        if (StringUtils.hasLength(server.getId())) {
+            serverMap.put(server.getId(), server);
         }
         serverMap.put(UUID.randomUUID().toString(), server);
-        writeToFile();
     }
 
 
     private synchronized void writeToFile() {
+        if (!hasFile) return;
         try {
+            FileOutputStream fileOutputStream = new FileOutputStream(serverListFile);
             List<Server> list = serverMap.entrySet().stream().map(en -> en.getValue()).collect(Collectors.toList());
-            serverListFileOutputStream.write(JSON.toJSONString(list).getBytes(StandardCharsets.UTF_8));
-            serverListFileOutputStream.flush();
+            fileOutputStream.write(JSON.toJSONString(list).getBytes(StandardCharsets.UTF_8));
+            fileOutputStream.flush();
         } catch (IOException e) {
             log.error("writeToFile fail: {}", e.getMessage());
         }
     }
 
     @PreDestroy
-    public void preDestroy() throws IOException {
+    public void preDestroy() {
         writeToFile();
-        serverListFileOutputStream.close();
     }
 
 
