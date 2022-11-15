@@ -15,57 +15,50 @@
 
 </head>
 <body>
-<div class="row mt-0 p-0 m-0">
-    <!--sheet nav-->
-    <div class="layui-tab layui-tab-card layui-bg-gray  border rounded-4">
-        <ul class="layui-tab-title mb-0" id="areaTab">
-        </ul>
-        <div class="layui-tab-content py-0">
-            <div class="layui-tab-item layui-show">
-                <table class="layui-hide" id="serverList" lay-filter="serverList"></table>
-            </div>
-        </div>
-    </div>
-</div>
+<table class="layui-hide" id="serverList" lay-filter="serverList"></table>
 <script type="text/html" id="toolbar">
-    <a class="layui-btn layui-btn-xs layui-btn-warm text-decoration-none" lay-event="handle">Edit</a>
-    <a class="layui-btn layui-btn-xs text-decoration-none" lay-event="history">Delete</a>
+    <div class="layui-btn-group">
+        <a class="layui-btn layui-btn-xs layui-btn-normal text-decoration-none" lay-event="handle">Edit</a>
+        <a class="layui-btn layui-btn-xs layui-btn-danger text-decoration-none" lay-event="history">Del</a>
+        <a class="layui-btn layui-btn-xs layui-btn-warm text-decoration-none" lay-event="history">Go</a>
+    </div>
+</script>
+<script type="text/html" id="topToolBar">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" lay-event="getCheckData">Add</button>
+    </div>
 </script>
 <script>
     layui.use(['table'], function () {
         let table = layui.table, $ = layui.$, layer = layui.layer;
         table.render({
             elem: '#serverList' // table id
-            , url: '/serverList'
-            , skin: 'line'
-            //, where: batchTableWhere
-            , method: 'post' //如果无需自定义HTTP类型，可不加该参数
-            , request: {
-                pageName: 'pageNo',
-                limitName: 'pageSize'
-            } //如果无需自定义请求参数，可不加该参数
-            //response: {} //如果无需自定义数据响应名称，可不加该参数
-            , contentType: 'application/json'
+            , url: '/server/list'
+            //, skin: 'line'
+            , method: 'get'
+            , toolbar: '#topToolBar'
             , defaultToolbar: false
-            , title: ''
-            , height: 'full'
-            //, parseData: globalParseData
+            //, title: 'Server List'
+            //, height: 'full'
             , cols: [[
-                {field: 'title', title: 'Title', align: 'center'}
-                , {field: 'host', title: 'Host', align: 'center'/*, templet: "<span>" + farmName + "</span>"*/}
+                {type: 'checkbox', fixed: 'left'},
+                {field: 'id', title: 'ID', hide: true}
+                , {field: 'name', title: 'Name', align: 'center', edit: 'text'}
+                , {field: 'host', title: 'Host', align: 'center', edit: 'text'}
                 , {fixed: 'right', title: 'Operate', toolbar: '#toolbar', align: 'center'}
             ]]
-            //, page: globalPageOption
-            //, data: [{}]
-            //数据加载完成后重新向父页面发送页面高度
-            // , done: function (res, curr, count) {
-            //     sendHeight();
-            // }
-        })
+        });
 
-        //多窗口模式 - esc 键
-        $(document).on('keyup', function(e){
-            if(e.keyCode === 27){
+        //listen table item modification
+        table.on('edit(serverList)', function (obj) {
+            var value = obj.value //new value
+                , data = obj.data //all data of the row
+                , field = obj.field; //field
+            layer.msg(value);
+        });
+
+        $(document).on('keyup', function (e) {
+            if (e.keyCode === 27) {
                 layer.close(layer.escIndex ? layer.escIndex[0] : 0);
             }
         });
