@@ -36,7 +36,7 @@ public class ServerListDao {
 
     private File serverListFile;
 
-    private String desPassword = System.getProperty("des.password", "Qwer1234#");
+    private String desPassword = System.getProperty("des.password","123456");
 
     @PostConstruct
     public void init() {
