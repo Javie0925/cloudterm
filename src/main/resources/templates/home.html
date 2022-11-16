@@ -19,7 +19,9 @@
     <script src="js/main.js"></script>
 </head>
 <body>
-<h2 style="position: fixed;z-index: 10000;color: white;top: 2%;right: 2%;">Cloud Terminal</h2>
+<h2 style="position: fixed;z-index: 10000;color: white;top: 2%;right: 2%;">
+    <strong>Cloud Terminal</strong>
+</h2>
 <div id="terminal"></div>
 <script>
     layui.use(['util'], function () {
@@ -38,9 +40,9 @@
             , css: {right: 50, bottom: 100}
             , bgcolor: '#c15050'
             , click: function (type) {
-                if (type === 'bar1'){
+                if (type === 'bar1') {
                     location.replace(location.origin);
-                }else if (type === 'bar2') {
+                } else if (type === 'bar2') {
                     let that = this;
                     //多窗口模式，层叠置顶
                     layer.open({
