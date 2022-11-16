@@ -28,14 +28,19 @@
         util.fixbar({
             bar1: true
             , bar2: true
-            , icon1: '&#xe653;'
-            , icon2: '&#xe639;'
-            , title1: "server list"
-            , title2: "clear"
+            , bar3: true
+            , icon1: '&#xe68e;'
+            , icon2: '&#xe653;'
+            , icon3: '&#xe639;'
+            , title1: "home"
+            , title2: "server list"
+            , title3: "clear"
             , css: {right: 50, bottom: 100}
             , bgcolor: '#c15050'
             , click: function (type) {
-                if (type === 'bar1') {
+                if (type === 'bar1'){
+                    location.replace(location.origin);
+                }else if (type === 'bar2') {
                     let that = this;
                     //多窗口模式，层叠置顶
                     layer.open({
@@ -67,7 +72,7 @@
                             }
                         }
                     });
-                } else if (type === 'bar2') {
+                } else if (type === 'bar3') {
                     let command = 'clear || cls \r\n';
                     window.ws.send(
                         action('TERMINAL_COMMAND', {

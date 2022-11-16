@@ -4190,11 +4190,13 @@ layui.define("jquery", function (e) {
         fixbar: function (e) {
             var i, n, r = "layui-fixbar", a = "layui-fixbar-top", o = t(document), l = t("body");
             e = t.extend({showHeight: 200}, e), e.bar1 = e.bar1 === !0 ? "&#xe606;" : e.bar1, e.bar2 = e.bar2 === !0 ? "&#xe607;" : e.bar2, e.bgcolor = e.bgcolor ? "background-color:" + e.bgcolor : "";
-            var c = [e.icon1, e.icon2, "&#xe604;"],
+            var c = [e.icon1, e.icon2, e.icon3, "&#xe604;"],
                 g = t([
-                    '<ul class="' + r + '">', e.bar1 ? '<li class="layui-icon" id="layui_fixbar1" lay-type="bar1" style="' + e.bgcolor + '" title="' + e.title1 + '">' + c[0] + "</li>" : "",
+                    '<ul class="' + r + '">',
+                    e.bar1 ? '<li class="layui-icon" id="layui_fixbar1" lay-type="bar1" style="' + e.bgcolor + '" title="' + e.title1 + '">' + c[0] + "</li>" : "",
                     e.bar2 ? '<li class="layui-icon" id="layui_fixbar2" lay-type="bar2" style="' + e.bgcolor + '" title="' + e.title2 + '">' + c[1] + "</li>" : "",
-                    '<li class="layui-icon ' + a + '" lay-type="top" style="' + e.bgcolor + '">' + c[2] + "</li>", "</ul>"
+                    e.bar3 ? '<li class="layui-icon" id="layui_fixbar3" lay-type="bar3" style="' + e.bgcolor + '" title="' + e.title3 + '">' + c[2] + "</li>" : "",
+                    '<li class="layui-icon ' + a + '" lay-type="top" style="' + e.bgcolor + '">' + c[3] + "</li>", "</ul>"
                 ].join("")),
                 u = g.find("." + a), s = function () {
                     var t = o.scrollTop();
