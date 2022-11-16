@@ -27,65 +27,58 @@
         //fixbar
         util.fixbar({
             bar1: true
-            , bar2: false
-            , icon1: 'layui-icon-layer'
-            , icon2: 'layui-icon-tabs'
+            , bar2: true
+            , icon1: '&#xe653;'
+            , icon2: '&#xe639;'
+            , title1: "server list"
+            , title2: "clear"
             , css: {right: 50, bottom: 100}
             , bgcolor: '#c15050'
             , click: function (type) {
                 if (type === 'bar1') {
-
-                    var that = this;
+                    let that = this;
                     //多窗口模式，层叠置顶
                     layer.open({
                         type: 2 //page
                         ,title: 'Server List'
-                        ,area: ['40%', '50%'] // [width,height]
+                        ,area: ['60%', '70%'] // [width,height]
                         ,shade:  [0.8, '#393D49']
                         ,maxmin: true
-                        // ,offset: [ //为了演示，随机坐标
-                        //     Math.random()*($(window).height()-300)
-                        //     ,Math.random()*($(window).width()-390)
-                        // ]
                         ,content: '/?page=serverList'
-                        //,btn: ['继续弹出', '全部关闭'] //只是为了演示
-                        // ,yes: function(){
-                        //     $(that).click();
-                        // }
-                        // ,btn2: function(){
-                        //     layer.closeAll();
-                        // }
-
                         ,zIndex: layer.zIndex //重点1
                         ,success: function(layero, index){
-                            layer.setTop(layero); //重点2. 保持选中窗口置顶
-
-                            //记录索引，以便按 esc 键关闭。事件见代码最末尾处。
+                            layer.setTop(layero); // keep the selected window on top
+                            //recode index
                             layer.escIndex = layer.escIndex || [];
                             layer.escIndex.unshift(index);
-                            //选中当前层时，将当前层索引放置在首位
+                            //if being selected, put current layer index to top
                             layero.on('mousedown', function(){
                                 var _index = layer.escIndex.indexOf(index);
                                 if(_index !== -1){
-                                    layer.escIndex.splice(_index, 1); //删除原有索引
+                                    layer.escIndex.splice(_index, 1); //delete old index
                                 }
-                                layer.escIndex.unshift(index); //将索引插入到数组首位
+                                layer.escIndex.unshift(index); //put index to the head
                             });
                         }
                         ,end: function(){
-                            //更新索引
+                            //update index
                             if(typeof layer.escIndex === 'object'){
                                 layer.escIndex.splice(0, 1);
                             }
                         }
                     });
                 } else if (type === 'bar2') {
-                    layer.msg('两个 bar 都可以设定是否开启')
+                    let command = 'clear\n';
+                    window.ws.send(
+                        action('TERMINAL_COMMAND', {
+                            command,
+                        })
+                    );
                 }
             }
         });
 
-        //多窗口模式 - esc 键
+        // esc key event
         $(document).on('keyup', function(e){
             if(e.keyCode === 27){
                 layer.close(layer.escIndex ? layer.escIndex[0] : 0);

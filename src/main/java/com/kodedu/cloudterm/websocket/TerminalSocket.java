@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class TerminalSocket extends TextWebSocketHandler {
@@ -39,7 +40,7 @@ public class TerminalSocket extends TextWebSocketHandler {
                             })
                             .collect(Collectors.toMap(list -> list.get(0), list -> list.get(1)));
         }
-        terminalService.setWebSocketSession(session);
+        terminalService.setWebSocketSession(session, Objects.nonNull(queryMap) ? queryMap.get("serverId") : null);
         super.afterConnectionEstablished(session);
     }
 

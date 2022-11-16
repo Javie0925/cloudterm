@@ -1,17 +1,25 @@
 package com.kodedu.cloudterm.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jcraft.jsch.*;
+import com.kodedu.cloudterm.dao.ServerListDao;
+import com.kodedu.cloudterm.dao.entity.Server;
 import com.kodedu.cloudterm.helper.IOHelper;
 import com.kodedu.cloudterm.helper.ThreadHelper;
 import com.pty4j.PtyProcess;
 import com.pty4j.WinSize;
 import com.sun.jna.Platform;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
+import javax.annotation.Resource;
 import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -20,12 +28,16 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.LinkedBlockingQueue;
 
+@Slf4j
 @Component
 @Scope("prototype")
 public class TerminalService {
 
     @Value("${shell:#{null}}")
     private String shellStarter;
+
+    @Resource
+    private ServerListDao serverListDao;
 
     private boolean isReady;
     private String[] termCommand;
@@ -36,6 +48,9 @@ public class TerminalService {
     private BufferedReader errorReader;
     private BufferedWriter outputWriter;
     private WebSocketSession webSocketSession;
+    private String serverId;
+    private Channel jschChannel;
+    private Session jschSession;
 
     private LinkedBlockingQueue<String> commandQueue = new LinkedBlockingQueue<>();
 
@@ -48,8 +63,16 @@ public class TerminalService {
     }
 
     private void initializeProcess() throws Exception {
-        if(isReady){
+        if (isReady) {
             return;
+        }
+        if (StringUtils.hasLength(serverId)) {
+            try {
+                initializeJcshProcess(serverId);
+                return;
+            } catch (Exception e) {
+                log.error("", e);
+            }
         }
         String userHome = System.getProperty("user.home");
         Path dataDir = Paths.get(userHome).resolve(".terminalfx");
@@ -61,7 +84,7 @@ public class TerminalService {
             this.termCommand = "/bin/sh -i".split("\\s+");
         }
 
-        if(Objects.nonNull(shellStarter)){
+        if (Objects.nonNull(shellStarter)) {
             this.termCommand = shellStarter.split("\\s+");
         }
 
@@ -86,6 +109,59 @@ public class TerminalService {
         });
         this.isReady = true;
 
+    }
+
+    private void initializeJcshProcess(String serverId) throws JSchException, IOException {
+        Server server = serverListDao.findById(serverId);
+        Assert.notNull(server, "server is null");
+        JSch jsch = new JSch();
+        jschSession = jsch.getSession(server.getUser(), server.getHost(), server.getPort());
+        jschSession.setPassword(server.getPasswd());
+        jschSession.setConfig("StrictHostKeyChecking", "no");
+        UserInfo userInfo = new UserInfo() {
+            @Override
+            public String getPassphrase() {
+                return null;
+            }
+
+            @Override
+            public String getPassword() {
+                return server.getPasswd();
+            }
+
+            @Override
+            public boolean promptPassword(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean promptPassphrase(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean promptYesNo(String s) {
+                return false;//notice here!
+            }
+
+            @SneakyThrows
+            @Override
+            public void showMessage(String s) {
+                log.info("jcsh show message:{}", s);
+                print(s);
+            }
+        };
+        jschSession.setUserInfo(userInfo);
+        jschSession.connect(5000);
+        jschChannel = jschSession.openChannel("shell");
+        jschChannel.connect(5*1000);
+        this.inputReader = new BufferedReader(new InputStreamReader(jschChannel.getInputStream()));
+        this.outputWriter = new BufferedWriter(new OutputStreamWriter(jschChannel.getOutputStream()));
+        ThreadHelper.start(() -> {
+            printReader(inputReader);
+        });
+
+        this.isReady = true;
     }
 
     public void print(String text) throws IOException {
@@ -146,14 +222,24 @@ public class TerminalService {
         }
     }
 
-    public void onTerminalClose(){
-        if(null!=process && process.isAlive()){
+    public void onTerminalClose() {
+        if (null != process && process.isAlive()) {
             process.destroy();
+        }
+        if (null != jschChannel && !jschChannel.isClosed()){
+            jschChannel.disconnect();
+        }
+        if (null != jschSession && !jschSession.isConnected()){
+            jschSession.disconnect();
         }
     }
 
-    public void setWebSocketSession(WebSocketSession webSocketSession) {
+    public void setWebSocketSession(WebSocketSession webSocketSession, String serverId) {
         this.webSocketSession = webSocketSession;
+        if ("undefined".equals(serverId)) {
+            serverId = null;
+        }
+        this.serverId = serverId;
     }
 
     public WebSocketSession getWebSocketSession() {

@@ -8,7 +8,8 @@ public class Server {
     private String id;
     private String name;
     private String host;
-    private String port;
+    private int port;
     private String passwd;
     private String user;
+    private String note;
 }

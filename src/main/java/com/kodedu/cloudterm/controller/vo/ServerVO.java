@@ -8,6 +8,7 @@ public class ServerVO {
     private String id;
     private String name;
     private String host;
-    private String port;
+    private int port;
+    private String note;
 
 }

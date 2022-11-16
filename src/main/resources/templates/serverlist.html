@@ -5,47 +5,195 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link href="css/xterm.min.css" rel="stylesheet" type="text/css"/>
-    <link href="css/fullscreen.min.css" rel="stylesheet" type="text/css"/>
     <link rel="shortcut icon" href="favicon.png">
     <title>Server List</title>
 
-    <link rel="stylesheet" href="js/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="js/layui/css/layui.css">
     <script src="js/layui/layui.js"></script>
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <style>
+        .layui-table-tips-c:before {
+            position: relative;
+            right: 1px;
+            bottom: 3px;
+        }
+    </style>
 
 </head>
 <body>
+<div class="modal fade" id="addServerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog mt-5">
+        <div class="modal-content shadow-lg">
+            <div class="modal-header">
+                <h5 class="modal-title"><strong>Add Server</strong></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form class="layui-form" action="" lay-filter="addServerForm">
+                    <div class="row layui-form-item">
+                        <label class="col-4 layui-form-label">Server Name</label>
+                        <div class="col-7 layui-input-block ms-0">
+                            <input class="layui-input" type="text" name="name" lay-verify="required"/>
+                        </div>
+                    </div>
+                    <div class="row layui-form-item">
+                        <label class="col-4 layui-form-label">Host</label>
+                        <div class="col-7 layui-input-block ms-0">
+                            <input class="layui-input" type="text" name="host" lay-verify="ip"/>
+                        </div>
+                    </div>
+                    <div class="row layui-form-item">
+                        <label class="col-4 layui-form-label">Port</label>
+                        <div class="col-7 layui-input-block ms-0">
+                            <input class="layui-input" type="text" name="port" lay-verify="port"/>
+                        </div>
+                    </div>
+                    <div class="row layui-form-item">
+                        <label class="col-4 layui-form-label">User Name</label>
+                        <div class="col-7 layui-input-block ms-0">
+                            <input class="layui-input" type="text" name="user" lay-verify="required"/>
+                        </div>
+                    </div>
+                    <div class="row layui-form-item">
+                        <label class="col-4 layui-form-label">Password</label>
+                        <div class="col-7 layui-input-block ms-0">
+                            <input class="layui-input" type="password" name="passwd" lay-verify="required"/>
+                        </div>
+                    </div>
+                    <div class="row layui-form-item">
+                        <label class="col-4 layui-form-label">Note</label>
+                        <div class="col-7 layui-input-block ms-0">
+                            <textarea class="layui-textarea" name="note"></textarea>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-input-block d-flex justify-content-center ms-0">
+                            <button type="button" class="layui-btn theme-bg" lay-submit=""
+                                    lay-filter="addServerFormSubmit">Submit
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editServerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog mt-5">
+        <div class="modal-content shadow-lg">
+            <div class="modal-header">
+                <h5 class="modal-title"><strong>Update Server</strong></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form class="layui-form" action="" lay-filter="editServerForm">
+                    <div class="row layui-form-item" hidden>
+                        <label class="col-4 layui-form-label">ID</label>
+                        <div class="col-7 layui-input-block ms-0">
+                            <input class="layui-input" type="text" name="id" lay-verify="required"/>
+                        </div>
+                    </div>
+                    <div class="row layui-form-item">
+                        <label class="col-4 layui-form-label">Server Name</label>
+                        <div class="col-7 layui-input-block ms-0">
+                            <input class="layui-input" type="text" name="name" lay-verify="required"/>
+                        </div>
+                    </div>
+                    <div class="row layui-form-item">
+                        <label class="col-4 layui-form-label">Host</label>
+                        <div class="col-7 layui-input-block ms-0">
+                            <input class="layui-input" type="text" name="host" lay-verify="ip"/>
+                        </div>
+                    </div>
+                    <div class="row layui-form-item">
+                        <label class="col-4 layui-form-label">Port</label>
+                        <div class="col-7 layui-input-block ms-0">
+                            <input class="layui-input" type="text" name="port" lay-verify="port"/>
+                        </div>
+                    </div>
+                    <div class="row layui-form-item">
+                        <label class="col-4 layui-form-label">User Name</label>
+                        <div class="col-7 layui-input-block ms-0">
+                            <input class="layui-input" type="text" name="user" lay-verify="required"/>
+                        </div>
+                    </div>
+                    <div class="row layui-form-item">
+                        <label class="col-4 layui-form-label">Password</label>
+                        <div class="col-7 layui-input-block ms-0">
+                            <input class="layui-input" type="password" name="passwd" lay-verify="required"/>
+                        </div>
+                    </div>
+                    <div class="row layui-form-item">
+                        <label class="col-4 layui-form-label">Note</label>
+                        <div class="col-7 layui-input-block ms-0">
+                            <textarea class="layui-textarea" name="note"></textarea>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-input-block d-flex justify-content-center ms-0">
+                            <button type="button" class="layui-btn theme-bg" lay-submit=""
+                                    lay-filter="editServerFormSubmit">Submit
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <table class="layui-hide" id="serverList" lay-filter="serverList"></table>
-<script type="text/html" id="toolbar">
+
+<script type="text/html" id="sideToolbar">
+    <a class="layui-btn layui-btn-xs layui-btn-normal text-decoration-none" style="background-color: orange" lay-event="testConnection">Test</a>
     <div class="layui-btn-group">
-        <a class="layui-btn layui-btn-xs layui-btn-normal text-decoration-none" lay-event="handle">Edit</a>
-        <a class="layui-btn layui-btn-xs layui-btn-danger text-decoration-none" lay-event="history">Del</a>
-        <a class="layui-btn layui-btn-xs layui-btn-warm text-decoration-none" lay-event="history">Go</a>
+        <a class="layui-btn layui-btn-xs layui-btn-normal text-decoration-none" lay-event="thisTab">This Tab</a>
+        <a class="layui-btn layui-btn-xs layui-btn-normal text-decoration-none" lay-event="newTab">New Tab</a>
     </div>
 </script>
 <script type="text/html" id="topToolBar">
     <div class="layui-btn-container">
-        <button class="layui-btn layui-btn-sm" lay-event="getCheckData">Add</button>
+        <button class="layui-btn layui-btn-sm" lay-event="add">
+            <i class="layui-icon layui-icon-add-1"></i>
+        </button>
+        <button class="layui-btn layui-btn-sm" lay-event="del">
+            <i class="layui-icon layui-icon-subtraction"></i>
+        </button>
+        <button class="layui-btn layui-btn-sm" lay-event="refresh">
+            <i class="layui-icon layui-icon-refresh-3"></i>
+        </button>
     </div>
 </script>
 <script>
     layui.use(['table'], function () {
-        let table = layui.table, $ = layui.$, layer = layui.layer;
-        table.render({
+        let table = layui.table, $ = layui.$, layer = layui.layer, form = layui.form;
+        //bootstrap modals
+        let addServerModal = new bootstrap.Modal(document.getElementById('addServerModal'), {});
+        let editServerModal = new bootstrap.Modal(document.getElementById('editServerModal'), {});
+
+        let serverListTable = table.render({
             elem: '#serverList' // table id
             , url: '/server/list'
             //, skin: 'line'
             , method: 'get'
             , toolbar: '#topToolBar'
-            , defaultToolbar: false
-            //, title: 'Server List'
-            //, height: 'full'
+            , defaultToolbar: [{ //customize
+                title: 'tips'
+                , layEvent: 'tips'
+                , icon: 'layui-icon-tips'
+            }]
             , cols: [[
                 {type: 'checkbox', fixed: 'left'},
                 {field: 'id', title: 'ID', hide: true}
-                , {field: 'name', title: 'Name', align: 'center', edit: 'text'}
-                , {field: 'host', title: 'Host', align: 'center', edit: 'text'}
-                , {fixed: 'right', title: 'Operate', toolbar: '#toolbar', align: 'center'}
+                , {field: 'name', title: 'Name', align: 'center', sort: true}
+                , {field: 'host', title: 'Host', align: 'center', sort: true}
+                , {field: 'port', title: 'Port', align: 'center', sort: true, hide: true}
+                , {field: 'note', title: 'Note', align: 'center'}
+                , {fixed: 'right', width: 200, title: 'Go', toolbar: '#sideToolbar', align: 'center'}
             ]]
         });
 
@@ -62,11 +210,134 @@
                 }
             })
         });
-
-        $(document).on('keyup', function (e) {
-            if (e.keyCode === 27) {
-                layer.close(layer.escIndex ? layer.escIndex[0] : 0);
+        // side toolbar event handle
+        table.on('tool(serverList)', function (obj) {
+            let data = obj.data;
+            if (obj.event === 'thisTab') {
+                top.postMessage({
+                    serverId: data.id,
+                    newTab: false
+                });
+            } else if (obj.event === 'newTab') {
+                top.postMessage({
+                    serverId: data.id,
+                    newTab: true
+                });
+            } else if (obj.event === 'testConnection') {
+                layer.load(2);
+                $.ajax("/server/test", {
+                    data: {
+                        id: data.id
+                    },
+                    success: function (data) {
+                        if (data.code == 0) {
+                            layer.closeAll('loading');
+                            layer.msg("Succeeded!", {
+                                icon: 6
+                            })
+                        } else {
+                            layer.closeAll('loading');
+                            layer.msg("Failed: " + data.error + "!", {
+                                icon: 5
+                            })
+                        }
+                    }
+                })
             }
+        });
+
+        //row click event
+        table.on('rowDouble(serverList)', function (obj) {
+            //change row style after being selected
+            obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
+
+            let data = obj.data;
+            form.val('editServerForm', data);
+            editServerModal.show()
+        });
+        table.on('row(serverList)', function (obj) {
+            //change row style after being selected
+            obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
+        });
+
+        // top toolbar event handle
+        table.on("toolbar(serverList)", function (obj) {
+            switch (obj.event) {
+                case 'add':
+                    addServerModal.show();
+                    break
+                case 'del':
+                    let checkStatus = table.checkStatus('serverList'), data = checkStatus.data;
+                    if (!data || data.length == 0) return;
+                    layer.confirm('Delete for sure? ', {
+                        btn: ['Yes', 'No'],
+                        offset: 'center',
+                        //skin: 'layui-layer-lan',
+                        title: "Confirm",
+                        shade: 0.01,
+                        shadeClose: true
+                    }, function (index) {
+                        let ids = [];
+                        data.forEach(function (data, index) {
+                            ids.push(data.id);
+                        })
+                        $.ajax("/server", {
+                            type: 'delete',
+                            data: {
+                                idList: JSON.stringify(ids)
+                            },
+                            success: function (data) {
+                                if (data.code == 0) {
+                                    layer.msg("Delete success!")
+                                    serverListTable.reload()
+                                } else {
+                                    layer.msg("Delete fail, " + data.error)
+                                }
+                            }
+                        })
+                    });
+                    serverListTable.reload()
+                    break
+                case 'refresh':
+                    serverListTable.reload()
+                    break
+                case 'tips':
+                    layer.msg("double click a row to edit the server information")
+                    break
+            }
+        })
+
+        form.on('submit(addServerFormSubmit)', function (data) {
+            let field = data.field;
+            $.ajax("/server", {
+                type: 'post',
+                data: field,
+                success: function (data) {
+                    if (data.code == 0) {
+                        layer.msg("Add server successfully!", {})
+                        serverListTable.reload()
+                    } else {
+                        layer.msg(data.error)
+                    }
+                }
+            })
+
+        });
+        form.on('submit(editServerFormSubmit)', function (data) {
+            let field = data.field;
+            $.ajax("/server", {
+                type: 'post',
+                data: field,
+                success: function (data) {
+                    if (data.code == 0) {
+                        layer.msg("Update server successfully!", {})
+                        serverListTable.reload();
+                        editServerModal.hide();
+                    } else {
+                        layer.msg(data.error)
+                    }
+                }
+            })
         });
     });
 </script>

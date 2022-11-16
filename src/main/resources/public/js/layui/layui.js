@@ -4190,8 +4190,12 @@ layui.define("jquery", function (e) {
         fixbar: function (e) {
             var i, n, r = "layui-fixbar", a = "layui-fixbar-top", o = t(document), l = t("body");
             e = t.extend({showHeight: 200}, e), e.bar1 = e.bar1 === !0 ? "&#xe606;" : e.bar1, e.bar2 = e.bar2 === !0 ? "&#xe607;" : e.bar2, e.bgcolor = e.bgcolor ? "background-color:" + e.bgcolor : "";
-            var c = [e.bar1, e.bar2, "&#xe604;"],
-                g = t(['<ul class="' + r + '">', e.bar1 ? '<li class="layui-icon" lay-type="bar1" style="' + e.bgcolor + '">' + c[0] + "</li>" : "", e.bar2 ? '<li class="layui-icon" lay-type="bar2" style="' + e.bgcolor + '">' + c[1] + "</li>" : "", '<li class="layui-icon ' + a + '" lay-type="top" style="' + e.bgcolor + '">' + c[2] + "</li>", "</ul>"].join("")),
+            var c = [e.icon1, e.icon2, "&#xe604;"],
+                g = t([
+                    '<ul class="' + r + '">', e.bar1 ? '<li class="layui-icon" id="layui_fixbar1" lay-type="bar1" style="' + e.bgcolor + '" title="' + e.title1 + '">' + c[0] + "</li>" : "",
+                    e.bar2 ? '<li class="layui-icon" id="layui_fixbar2" lay-type="bar2" style="' + e.bgcolor + '" title="' + e.title2 + '">' + c[1] + "</li>" : "",
+                    '<li class="layui-icon ' + a + '" lay-type="top" style="' + e.bgcolor + '">' + c[2] + "</li>", "</ul>"
+                ].join("")),
                 u = g.find("." + a), s = function () {
                     var t = o.scrollTop();
                     t >= e.showHeight ? i || (u.show(), i = 1) : i && (u.hide(), i = 0)
@@ -5237,12 +5241,20 @@ layui.define("layer", function (e) {
         o = "layui-this", s = "layui-hide", c = "layui-disabled", u = function () {
             this.config = {
                 verify: {
-                    required: [/[\S]+/, "\u5fc5\u586b\u9879\u4e0d\u80fd\u4e3a\u7a7a"],
-                    phone: [/^1\d{10}$/, "\u8bf7\u8f93\u5165\u6b63\u786e\u7684\u624b\u673a\u53f7"],
-                    email: [/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/, "\u90ae\u7bb1\u683c\u5f0f\u4e0d\u6b63\u786e"],
-                    url: [/^(#|(http(s?)):\/\/|\/\/)[^\s]+\.[^\s]+$/, "\u94fe\u63a5\u683c\u5f0f\u4e0d\u6b63\u786e"],
+                    //required: [/[\S]+/, "\u5fc5\u586b\u9879\u4e0d\u80fd\u4e3a\u7a7a"],
+                    required: [/[\S]+/, "required filed can not be empty!"],
+                    //phone: [/^1\d{10}$/, "\u8bf7\u8f93\u5165\u6b63\u786e\u7684\u624b\u673a\u53f7"],
+                    phone: [/^1\d{10}$/, "Please enter correct phone number!"],
+                    //email: [/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/, "\u90ae\u7bb1\u683c\u5f0f\u4e0d\u6b63\u786e"],
+                    email: [/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/, "Please enter correct email!"],
+                    //url: [/^(#|(http(s?)):\/\/|\/\/)[^\s]+\.[^\s]+$/, "\u94fe\u63a5\u683c\u5f0f\u4e0d\u6b63\u786e"],
+                    url: [/^(#|(http(s?)):\/\/|\/\/)[^\s]+\.[^\s]+$/, "Please enter correct url!"],
                     number: function (e) {
-                        if (!e || isNaN(e)) return "\u53ea\u80fd\u586b\u5199\u6570\u5b57"
+                        if (!e || isNaN(e)) return "Number only!"
+                    },
+                    ip: [/((25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d))).){3}(25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d)))/, "Please enter correct IP!"],
+                    port: function (e) {
+                        if (e <= 0 || e > 65535) return "Please enter correct port!"
                     },
                     date: [/^(\d{4})[-\/](\d{1}|0\d{1}|1[0-2])([-\/](\d{1}|0\d{1}|[1-2][0-9]|3[0-1]))*$/, "\u65e5\u671f\u683c\u5f0f\u4e0d\u6b63\u786e"],
                     identity: [/(^\d{15}$)|(^\d{17}(x|X|\d)$)/, "\u8bf7\u8f93\u5165\u6b63\u786e\u7684\u8eab\u4efd\u8bc1\u53f7"]

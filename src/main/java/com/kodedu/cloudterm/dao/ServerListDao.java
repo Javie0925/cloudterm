@@ -15,10 +15,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -52,7 +49,7 @@ public class ServerListDao {
                 List<Server> serverList = JSON.parseObject(new String(bytes, StandardCharsets.UTF_8), new TypeReference<List<Server>>() {
                 });
                 if (!CollectionUtils.isEmpty(serverList)) {
-                    serverList.stream().forEach(s->serverMap.put(s.getId(),s));
+                    serverList.stream().forEach(s -> serverMap.put(s.getId(), s));
                 }
             }
 
@@ -79,8 +76,11 @@ public class ServerListDao {
     public void upsert(Server server) {
         if (StringUtils.hasLength(server.getId())) {
             serverMap.put(server.getId(), server);
+        } else {
+            server.setId(UUID.randomUUID().toString().replaceAll("-", ""));
+            if (server.getPort() == 0) server.setPort(22);
+            serverMap.put(server.getId(), server);
         }
-        serverMap.put(UUID.randomUUID().toString(), server);
     }
 
 
@@ -102,4 +102,7 @@ public class ServerListDao {
     }
 
 
+    public void delete(List<String> idList) {
+        idList.stream().forEach(id -> serverMap.remove(id));
+    }
 }
