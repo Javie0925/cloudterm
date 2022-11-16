@@ -35,6 +35,8 @@ const resizeTerm = (term, ws) => {
 
 $(() => {
     let sec = location.protocol.indexOf("https") > -1
+    let name = location.search.substring(location.search.indexOf("&name=") + 6)
+    if (name) document.title = name;
     let ws = new WebSocket(`${sec ? "wss" : "ws"}://${location.host}/terminal` + location.search);
     window.ws = ws; // for further use
     let term = new Terminal({
@@ -86,9 +88,9 @@ window.addEventListener('message', function (event) {
     try {
         window.serverId = event.data.serverId;
         if (event.data.newTab) {
-            window.open(location.origin + '/?serverId=' + serverId);
+            window.open(location.origin + '/?serverId=' + serverId + "&name=" + event.data.name);
         } else {
-            location.replace(location.origin + '/?serverId=' + serverId)
+            location.replace(location.origin + '/?serverId=' + serverId + "&name=" + event.data.name)
         }
     } catch (e) {
         console.log(e);

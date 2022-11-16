@@ -123,7 +123,8 @@
                     <div class="row layui-form-item" id="passwd">
                         <label class="col-4 layui-form-label">Password</label>
                         <div class="col-7 layui-input-block ms-0">
-                            <input class="layui-input" type="password" name="passwd" placeholder="Empty if not changed!"/>
+                            <input class="layui-input" type="password" name="passwd"
+                                   placeholder="Empty if not changed!"/>
                         </div>
                     </div>
                     <div class="row layui-form-item">
@@ -217,11 +218,13 @@
             if (obj.event === 'thisTab') {
                 top.postMessage({
                     serverId: data.id,
+                    name: data.name,
                     newTab: false
                 });
             } else if (obj.event === 'newTab') {
                 top.postMessage({
                     serverId: data.id,
+                    name: data.name,
                     newTab: true
                 });
             } else if (obj.event === 'testConnection') {
@@ -347,9 +350,6 @@
             })
         });
     });
-    let showPasswdInput = function (){
-
-    }
 </script>
 </body>
 </html>

@@ -71,6 +71,10 @@ public class TerminalService {
                 initializeJschProcess(serverId);
                 return;
             } catch (Exception e) {
+                print(e.getMessage() + System.lineSeparator());
+                print("back to home ... " + System.lineSeparator());
+                print(System.lineSeparator());
+                print(System.lineSeparator());
                 log.error("", e);
             }
         }
@@ -154,7 +158,7 @@ public class TerminalService {
         jschSession.setUserInfo(userInfo);
         jschSession.connect(5000);
         jschChannel = jschSession.openChannel("shell");
-        jschChannel.connect(5*1000);
+        jschChannel.connect(5 * 1000);
         this.inputReader = new BufferedReader(new InputStreamReader(jschChannel.getInputStream()));
         this.outputWriter = new BufferedWriter(new OutputStreamWriter(jschChannel.getOutputStream()));
         ThreadHelper.start(() -> {
@@ -226,10 +230,10 @@ public class TerminalService {
         if (null != process && process.isAlive()) {
             process.destroy();
         }
-        if (null != jschChannel && !jschChannel.isClosed()){
+        if (null != jschChannel && !jschChannel.isClosed()) {
             jschChannel.disconnect();
         }
-        if (null != jschSession && !jschSession.isConnected()){
+        if (null != jschSession && !jschSession.isConnected()) {
             jschSession.disconnect();
         }
     }
