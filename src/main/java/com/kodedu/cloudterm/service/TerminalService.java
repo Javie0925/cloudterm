@@ -68,7 +68,7 @@ public class TerminalService {
         }
         if (StringUtils.hasLength(serverId)) {
             try {
-                initializeJcshProcess(serverId);
+                initializeJschProcess(serverId);
                 return;
             } catch (Exception e) {
                 log.error("", e);
@@ -111,7 +111,7 @@ public class TerminalService {
 
     }
 
-    private void initializeJcshProcess(String serverId) throws JSchException, IOException {
+    private void initializeJschProcess(String serverId) throws JSchException, IOException {
         Server server = serverListDao.findById(serverId);
         Assert.notNull(server, "server is null");
         JSch jsch = new JSch();

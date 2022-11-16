@@ -10,5 +10,6 @@ public class ServerVO {
     private String host;
     private int port;
     private String note;
+    private String user;
 
 }

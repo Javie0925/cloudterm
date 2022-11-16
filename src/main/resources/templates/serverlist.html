@@ -120,10 +120,10 @@
                             <input class="layui-input" type="text" name="user" lay-verify="required"/>
                         </div>
                     </div>
-                    <div class="row layui-form-item">
+                    <div class="row layui-form-item" id="passwd">
                         <label class="col-4 layui-form-label">Password</label>
                         <div class="col-7 layui-input-block ms-0">
-                            <input class="layui-input" type="password" name="passwd" lay-verify="required"/>
+                            <input class="layui-input" type="password" name="passwd" placeholder="Empty if not changed!"/>
                         </div>
                     </div>
                     <div class="row layui-form-item">
@@ -149,7 +149,8 @@
 <table class="layui-hide" id="serverList" lay-filter="serverList"></table>
 
 <script type="text/html" id="sideToolbar">
-    <a class="layui-btn layui-btn-xs layui-btn-normal text-decoration-none" style="background-color: orange" lay-event="testConnection">Test</a>
+    <a class="layui-btn layui-btn-xs layui-btn-normal text-decoration-none" style="background-color: orange"
+       lay-event="testConnection">Test</a>
     <div class="layui-btn-group">
         <a class="layui-btn layui-btn-xs layui-btn-normal text-decoration-none" lay-event="thisTab">This Tab</a>
         <a class="layui-btn layui-btn-xs layui-btn-normal text-decoration-none" lay-event="newTab">New Tab</a>
@@ -252,6 +253,7 @@
             obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
 
             let data = obj.data;
+            data.passwd = '';
             form.val('editServerForm', data);
             editServerModal.show()
         });
@@ -264,6 +266,11 @@
         table.on("toolbar(serverList)", function (obj) {
             switch (obj.event) {
                 case 'add':
+                    form.val("addServerForm", {
+                        port: 22,
+                        user: '',
+                        passwd: ''
+                    })
                     addServerModal.show();
                     break
                 case 'del':
@@ -340,6 +347,9 @@
             })
         });
     });
+    let showPasswdInput = function (){
+
+    }
 </script>
 </body>
 </html>

@@ -23,10 +23,15 @@ public class ServerListService {
     @Resource
     private ServerListDao serverListDao;
 
-    public List<Server> getServerList() {
+    public List<ServerVO> getServerList() {
         List<Server> serverList = serverListDao.getServerList();
-        List<Server> result = serverList.stream()
-                .sorted(Comparator.comparing(Server::getName))
+        List<ServerVO> result = serverList.stream()
+                .map(s->{
+                    ServerVO serverVO = new ServerVO();
+                    BeanUtils.copyProperties(s,serverVO);
+                    return serverVO;
+                })
+                .sorted(Comparator.comparing(ServerVO::getName))
                 .collect(Collectors.toList());
         return result;
     }

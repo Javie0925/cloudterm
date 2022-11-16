@@ -40,35 +40,35 @@
                     //多窗口模式，层叠置顶
                     layer.open({
                         type: 2 //page
-                        ,title: 'Server List'
-                        ,area: ['60%', '70%'] // [width,height]
-                        ,shade:  [0.8, '#393D49']
-                        ,maxmin: true
-                        ,content: '/?page=serverList'
-                        ,zIndex: layer.zIndex //重点1
-                        ,success: function(layero, index){
+                        , title: 'Server List'
+                        , area: ['60%', '70%'] // [width,height]
+                        , shade: [0.8, '#393D49']
+                        , maxmin: true
+                        , content: '/?page=serverList'
+                        , zIndex: layer.zIndex //重点1
+                        , success: function (layero, index) {
                             layer.setTop(layero); // keep the selected window on top
                             //recode index
                             layer.escIndex = layer.escIndex || [];
                             layer.escIndex.unshift(index);
                             //if being selected, put current layer index to top
-                            layero.on('mousedown', function(){
+                            layero.on('mousedown', function () {
                                 var _index = layer.escIndex.indexOf(index);
-                                if(_index !== -1){
+                                if (_index !== -1) {
                                     layer.escIndex.splice(_index, 1); //delete old index
                                 }
                                 layer.escIndex.unshift(index); //put index to the head
                             });
                         }
-                        ,end: function(){
+                        , end: function () {
                             //update index
-                            if(typeof layer.escIndex === 'object'){
+                            if (typeof layer.escIndex === 'object') {
                                 layer.escIndex.splice(0, 1);
                             }
                         }
                     });
                 } else if (type === 'bar2') {
-                    let command = 'clear\n';
+                    let command = 'clear || cls \r\n';
                     window.ws.send(
                         action('TERMINAL_COMMAND', {
                             command,
@@ -79,8 +79,8 @@
         });
 
         // esc key event
-        $(document).on('keyup', function(e){
-            if(e.keyCode === 27){
+        $(document).on('keyup', function (e) {
+            if (e.keyCode === 27) {
                 layer.close(layer.escIndex ? layer.escIndex[0] : 0);
             }
         });

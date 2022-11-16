@@ -30,7 +30,7 @@ public class ServerListController {
 
     @GetMapping("/list")
     public Result serverList() {
-        List<Server> serverList = serverListService.getServerList();
+        List<ServerVO> serverList = serverListService.getServerList();
         return Result.success(serverList);
     }
 
@@ -42,6 +42,9 @@ public class ServerListController {
             int i = Integer.parseInt(s);
             return i >= 0 && i <= 255;
         }).count() == 4, "please enter correct ip host! ");
+        Assert.hasLength(server.getName(),"name can not be empty!");
+        Assert.hasLength(server.getUser(),"user can not be empty!");
+        Assert.hasLength(server.getHost(),"host can not be empty!");
         serverListService.upsert(server);
         return Result.success();
     }
