@@ -1,3 +1,4 @@
+
 const style = {};
 
 const currentGeometry = () => {
@@ -41,9 +42,44 @@ $(() => {
     window.ws = ws; // for further use
     let term = new Terminal({
         cursorBlink: true,
+        bellStyle: 'sound',
+        // fontSize: 14,
+        // lineHeight: 1.2,
+        // letterSpacing: 0,
+        // fontWeight: '400',
+        // fontFamily: 'Consolas, "Courier New", monospace',
+        theme: {
+            foreground: "#ECECEC",
+            background: "#000000",
+            cursor: "help",
+            lineHeight: 20
+        }
+        // rendererType: 'canvas',
+        // scrollback: Number.MAX_SAFE_INTEGER
+    });
+    window.term = term;
+    let searchAddon = new SearchAddon.SearchAddon();
+    let searchbarAddon = new SearchBarAddon.SearchBarAddon({
+        searchAddon
     });
 
-    term.on('data', command => {
+    term.loadAddon(searchAddon);
+    term.loadAddon(searchbarAddon);
+
+    const fitAddon = new FitAddOn();
+    this.term.loadAddon(fitAddon);
+
+    // Open the terminal in #terminal-container
+    term.open(document.getElementById('terminal'));
+
+    // Make the terminal's size and geometry fit the size of #terminal-container
+    fitAddon.fit();
+
+    term.writeln('Welcome to cloud terminal!');
+
+    searchbarAddon.show();
+
+    term.onData(command => {
         console.log(command);
         ws.send(
             action('TERMINAL_COMMAND', {
