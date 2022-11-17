@@ -17,6 +17,24 @@
     <script src="js/xterm.min.js"></script>
     <script src="js/fullscreen.min.js"></script>
     <script src="js/main.js"></script>
+    <style>
+        /* style of scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;   /* width: for crosswise  height: vertical */
+            background: black;
+        }
+        /* style of slot */
+        ::-webkit-scrollbar-track {
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);    /* seldom used */
+            border-radius: 3px;
+        }
+        /* scrollbar thumb */
+        ::-webkit-scrollbar-thumb {
+            border-radius: 3px;
+            height: 100px;
+            background-color: #8b8b8b;
+        }
+    </style>
 </head>
 <body>
 <h2 style="position: fixed;z-index: 10000;color: white;top: 2%;right: 2%;">
@@ -37,7 +55,7 @@
             , title1: "home"
             , title2: "server list"
             , title3: "clear"
-            , css: {right: 50, bottom: 100}
+            , css: {right: 20, bottom: 50}
             , bgcolor: '#c15050'
             , click: function (type) {
                 if (type === 'bar1') {
