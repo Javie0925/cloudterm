@@ -8,7 +8,6 @@ import com.kodedu.cloudterm.helper.IOHelper;
 import com.kodedu.cloudterm.helper.ThreadHelper;
 import com.pty4j.PtyProcess;
 import com.pty4j.WinSize;
-import com.sun.jna.Platform;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +23,7 @@ import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -82,7 +82,7 @@ public class TerminalService {
         Path dataDir = Paths.get(userHome).resolve(".terminalfx");
         IOHelper.copyLibPty(dataDir);
 
-        if (Platform.isWindows()) {
+        if (System.getProperty("os.name").toLowerCase(Locale.ROOT).startsWith("win")) {
             this.termCommand = "cmd.exe".split("\\s+");
         } else {
             this.termCommand = "/bin/sh -i".split("\\s+");

@@ -17,10 +17,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -36,7 +33,7 @@ public class ServerListDao {
 
     private File serverListFile;
 
-    private String desPassword = System.getProperty("des.password","123456");
+    private String desPassword = System.getProperty("des.password", "123456");
 
     @PostConstruct
     public void init() {
@@ -53,6 +50,10 @@ public class ServerListDao {
             if (fileInputStream.available() > 0) {
                 byte[] bytes = new byte[fileInputStream.available()];
                 fileInputStream.read(bytes);
+                byte[] decryptBytes = DesUtil.decrypt(bytes, desPassword);
+                if (null == decryptBytes || decryptBytes.length == 0) {
+                    throw new RuntimeException("The DES password may be wrong, please check it before restarting! ");
+                }
                 List<Server> serverList = JSON.parseObject(new String(DesUtil.decrypt(bytes, desPassword), StandardCharsets.UTF_8), new TypeReference<List<Server>>() {
                 });
                 if (!CollectionUtils.isEmpty(serverList)) {
@@ -89,7 +90,7 @@ public class ServerListDao {
                 serverMap.put(server.getId(), server);
             }
         } else {
-            Assert.hasLength(server.getPasswd(),"password can not be empty!");
+            Assert.hasLength(server.getPasswd(), "password can not be empty!");
             server.setId(UUID.randomUUID().toString().replaceAll("-", ""));
             if (server.getPort() == 0) server.setPort(22);
             serverMap.put(server.getId(), server);
