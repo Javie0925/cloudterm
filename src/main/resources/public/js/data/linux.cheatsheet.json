@@ -2,14 +2,14 @@
   "code": 0,
   "data": [
     {
-      "name": "Ctrl a",
+      "name": "Ctrl + A",
       "cmd": "\u0001",
-      "info": ""
+      "info": "Move the curse to the beginning of the line"
     },
     {
-      "name": "Ctrl c",
+      "name": "Ctrl + C",
       "cmd": "\u0003",
-      "info": ""
+      "info": "Kill current process "
     },
     {
       "name": "Ctrl e",

@@ -41,7 +41,11 @@
     <strong>Cloud Terminal</strong>
 </h2>
 <div style="position: fixed;z-index: 10000;color: white;top: 0;right: 50%;">
-    <i id="tips" class="layui-icon layui-icon-down"
+    <i id="tips" class="layui-icon layui-icon-triangle-d"
+       style="font-size: 25px; color: #ffffff; font-weight: bolder;opacity: 0.6"></i>
+</div>
+<div style="position: fixed;z-index: 10000;color: white;bottom: 0;right: 50%;">
+    <i id="tldr" class="layui-icon layui-icon-up"
        style="font-size: 25px; color: #ffffff; font-weight: bolder;opacity: 0.6"></i>
 </div>
 <div id="terminal"></div>
@@ -103,12 +107,7 @@
                         }
                     });
                 } else if (type === 'bar3') {
-                    let command = 'clear || cls \r\n';
-                    window.ws.send(
-                        action('TERMINAL_COMMAND', {
-                            command,
-                        })
-                    );
+                    window.term.clear();
                 }
             }
         });
