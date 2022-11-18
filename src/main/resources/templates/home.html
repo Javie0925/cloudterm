@@ -40,23 +40,33 @@
 <h2 style="position: fixed;z-index: 10000;color: white;top: 2%;right: 2%;">
     <strong>Cloud Terminal</strong>
 </h2>
+<div style="position: fixed;z-index: 10000;color: white;top: 0;right: 50%;">
+    <i id="tips" class="layui-icon layui-icon-down"
+       style="font-size: 25px; color: #ffffff; font-weight: bolder;opacity: 0.6"></i>
+</div>
 <div id="terminal"></div>
 <script>
+    let theme = {
+        bgColor: '#c15050'
+    };
     layui.use(['util'], function () {
         let util = layui.util, $ = layui.$, layer = layui.layer;
         //fixbar
         util.fixbar({
-            bar1: true
-            , bar2: true
-            , bar3: true
-            , icon1: '&#xe68e;'
-            , icon2: '&#xe653;'
-            , icon3: '&#xe639;'
-            , title1: "home"
-            , title2: "server list"
-            , title3: "clear"
+            bar1: {
+                title: "home",
+                icon: '&#xe68e;'
+            }
+            , bar2: {
+                title: "server list",
+                icon: '&#xe653;'
+            }
+            , bar3: {
+                icon: '&#xe639;',
+                title: "clear"
+            }
             , css: {right: 20, bottom: 50}
-            , bgcolor: '#c15050'
+            , bgcolor: theme.bgColor
             , click: function (type) {
                 if (type === 'bar1') {
                     location.replace(location.origin);
@@ -103,6 +113,39 @@
             }
         });
 
+        $("#tips").click(function (event) {
+            layer.open({
+                type: 2 //page
+                , title: 'Cheat Sheets'
+                , area: ['60%', '70%'] // [width,height]
+                , shade: [0.8, '#393D49']
+                , maxmin: true
+                , content: '/?page=cheatSheet'
+                , zIndex: layer.zIndex //重点1
+                , anim: 1
+                , success: function (layero, index) {
+                    layer.setTop(layero); // keep the selected window on top
+                    //recode index
+                    layer.escIndex = layer.escIndex || [];
+                    layer.escIndex.unshift(index);
+                    //if being selected, put current layer index to top
+                    layero.on('mousedown', function () {
+                        var _index = layer.escIndex.indexOf(index);
+                        if (_index !== -1) {
+                            layer.escIndex.splice(_index, 1); //delete old index
+                        }
+                        layer.escIndex.unshift(index); //put index to the head
+                    });
+                }
+                , end: function () {
+                    //update index
+                    if (typeof layer.escIndex === 'object') {
+                        layer.escIndex.splice(0, 1);
+                    }
+                }
+            });
+        })
+
         // esc key event
         $(document).on('keyup', function (e) {
             if (e.keyCode === 27) {
@@ -110,6 +153,11 @@
             }
         });
     });
+    $("#tips").hover(function (event) {
+        $(event.target).css("opacity", 1).css("color", theme.bgColor)
+    }, function (event) {
+        $(event.target).css("opacity", 0.6).css("color", "#ffffff")
+    })
 </script>
 </body>
 </html>

@@ -4189,14 +4189,17 @@ layui.define("jquery", function (e) {
     var t = layui.$, i = layui.hint(), n = {
         fixbar: function (e) {
             var i, n, r = "layui-fixbar", a = "layui-fixbar-top", o = t(document), l = t("body");
-            e = t.extend({showHeight: 200}, e), e.bar1 = e.bar1 === !0 ? "&#xe606;" : e.bar1, e.bar2 = e.bar2 === !0 ? "&#xe607;" : e.bar2, e.bgcolor = e.bgcolor ? "background-color:" + e.bgcolor : "";
-            var c = [e.icon1, e.icon2, e.icon3, "&#xe604;"],
+            e = t.extend({showHeight: 200}, e),
+                e.bgcolor = e.bgcolor ? "background-color:" + e.bgcolor : "";
+            var c = ["&#xe606;", "&#xe607;", "&#xe607;", "&#xe607;", "&#xe607;", "&#xe604;"],
                 g = t([
                     '<ul class="' + r + '">',
-                    e.bar1 ? '<li class="layui-icon" id="layui_fixbar1" lay-type="bar1" style="' + e.bgcolor + '" title="' + e.title1 + '">' + c[0] + "</li>" : "",
-                    e.bar2 ? '<li class="layui-icon" id="layui_fixbar2" lay-type="bar2" style="' + e.bgcolor + '" title="' + e.title2 + '">' + c[1] + "</li>" : "",
-                    e.bar3 ? '<li class="layui-icon" id="layui_fixbar3" lay-type="bar3" style="' + e.bgcolor + '" title="' + e.title3 + '">' + c[2] + "</li>" : "",
-                    '<li class="layui-icon ' + a + '" lay-type="top" style="' + e.bgcolor + '">' + c[3] + "</li>", "</ul>"
+                    e.bar1 ? '<li class="layui-icon" id="layui_fixbar1" lay-type="bar1" style="' + e.bgcolor + '" title="' + (e.bar1.title ? e.bar1.title : '') + '">' + (e.bar1.icon ? e.bar1.icon : c[0]) + "</li>" : "",
+                    e.bar2 ? '<li class="layui-icon" id="layui_fixbar2" lay-type="bar2" style="' + e.bgcolor + '" title="' + (e.bar2.title ? e.bar2.title : '') + '">' + (e.bar2.icon ? e.bar2.icon : c[1]) + "</li>" : "",
+                    e.bar3 ? '<li class="layui-icon" id="layui_fixbar3" lay-type="bar3" style="' + e.bgcolor + '" title="' + (e.bar3.title ? e.bar3.title : '') + '">' + (e.bar3.icon ? e.bar3.icon : c[2]) + "</li>" : "",
+                    e.bar4 ? '<li class="layui-icon" id="layui_fixbar4" lay-type="bar4" style="' + e.bgcolor + '" title="' + (e.bar4.title ? e.bar4.title : '') + '">' + (e.bar4.icon ? e.bar3.icon : c[3]) + "</li>" : "",
+                    e.bar5 ? '<li class="layui-icon" id="layui_fixbar5" lay-type="bar5" style="' + e.bgcolor + '" title="' + (e.bar5.title ? e.bar5.title : '') + '">' + (e.bar5.icon ? e.bar3.icon : c[4]) + "</li>" : "",
+                    '<li class="layui-icon ' + a + '" lay-type="top" style="' + e.bgcolor + '">' + c[5] + "</li>", "</ul>"
                 ].join("")),
                 u = g.find("." + a), s = function () {
                     var t = o.scrollTop();

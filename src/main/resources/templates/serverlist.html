@@ -312,7 +312,10 @@
                     serverListTable.reload()
                     break
                 case 'tips':
-                    layer.msg("double click a row to edit the server information")
+                    layer.tips('Tips: double click a row to edit the server information', '.layui-table-tool-self', {
+                        tips: 4,
+                        time: 5000
+                    });
                     break
             }
         })

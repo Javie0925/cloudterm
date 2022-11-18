@@ -1,0 +1,66 @@
+{
+  "code": 0,
+  "data": [
+    {
+      "name": "Ctrl a",
+      "cmd": "\u0001",
+      "info": ""
+    },
+    {
+      "name": "Ctrl c",
+      "cmd": "\u0003",
+      "info": ""
+    },
+    {
+      "name": "Ctrl e",
+      "cmd": "\u0005",
+      "info": ""
+    },
+    {
+      "name": "Ctrl c",
+      "cmd": "\u0003",
+      "info": ""
+    },
+    {
+      "name": "Ctrl c",
+      "cmd": "\u0003",
+      "info": ""
+    },
+    {
+      "name": "Ctrl c",
+      "cmd": "\u0003",
+      "info": ""
+    },
+    {
+      "name": "Ctrl c",
+      "cmd": "\u0003",
+      "info": ""
+    },
+    {
+      "name": "Ctrl c",
+      "cmd": "\u0003",
+      "info": ""
+    },
+    {
+      "name": "Ctrl c",
+      "cmd": "\u0003",
+      "info": ""
+    },
+    {
+      "name": "Ctrl c",
+      "cmd": "\u0003",
+      "info": ""
+    },
+    {
+      "name": "Ctrl c",
+      "cmd": "\u0003",
+      "info": ""
+    },
+    {
+      "name": "Ctrl c",
+      "cmd": "\u0003",
+      "info": ""
+    }
+
+  ]
+}

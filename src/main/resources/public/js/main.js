@@ -42,6 +42,7 @@ $(() => {
     let term = new Terminal({
         cursorBlink: true,
     });
+    window.term = term;
 
     term.on('data', command => {
         console.log(command);

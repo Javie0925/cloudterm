@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="shortcut icon" href="favicon.png">
+    <title>Server List</title>
+
+    <link rel="stylesheet" href="js/layui/css/layui.css">
+    <script src="js/layui/layui.js"></script>
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <style>
+        .layui-table-tips-c:before {
+            position: relative;
+            right: 1px;
+            bottom: 3px;
+        }
+    </style>
+
+</head>
+<body>
+
+<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+    <ul class="layui-tab-title mb-0">
+        <li id="linuxTab" class="layui-this cheatSheet" data-sheet-type="linux">Linux</li>
+        <li id="winTab" class="cheatSheet" data-sheet-type="win">Windows</li>
+        <li class="cheatSheet" data-sheet-type="vim">Vim</li>
+    </ul>
+    <div class="layui-tab-content pt-0" style="height: 100px;">
+        <div class="layui-tab-item layui-show">
+            <table class="layui-hide" id="cheatSheet" lay-filter="cheatSheet"></table>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="topToolBar">
+    <div class="row align-items-center">
+        <input id="searchInput" class="layui-input col col-sm" type="search" name="key" placeholder="search cmd"/>
+        <button class="layui-btn layui-btn-primary col-1 border-0" lay-event="search">
+            <i class="layui-icon layui-icon-search" style="font-weight: bolder;font-size: 20px"></i>
+        </button>
+        <div class="col-6 col-xs-1"></div>
+    </div>
+</script>
+<script>
+    layui.use(['table'], function () {
+        let table = layui.table, $ = layui.$, layer = layui.layer;
+
+        let url = '/js/data/linux.cheatsheet.json';
+        let cheatSheetTable = table.render({
+            elem: '#cheatSheet' // table id
+            , url: url
+            , skin: 'line'
+            , method: 'get'
+            , toolbar: '#topToolBar'
+            , defaultToolbar: [{ //customize
+                title: 'tips'
+                , layEvent: 'tips'
+                , icon: 'layui-icon-tips'
+            }]
+            , cols: [[
+                {field: 'name', title: 'CMD'}
+                , {field: 'info', title: 'INFO'}
+            ]]
+        });
+
+        //row click event
+        table.on('rowDouble(cheatSheet)', function (obj) {
+            //change row style after being selected
+            obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
+            let command = obj.data.cmd;
+            window.parent.ws.send(
+                JSON.stringify({
+                    type: 'TERMINAL_COMMAND',
+                    command,
+                })
+            );
+        });
+        table.on('row(cheatSheet)', function (obj) {
+            //change row style after being selected
+            obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
+        });
+
+        // top toolbar event handle
+        table.on("toolbar(cheatSheet)", function (obj) {
+            switch (obj.event) {
+                case 'tips':
+                    layer.tips('Tips: double click a row to use the command', '.layui-table-tool-self', {
+                        tips: 4,
+                        time: 5000
+                    });
+                    break
+            }
+        })
+
+        $(".cheatSheet").click(function (event) {
+            let curr = $(event.target)
+            switch (curr.data("sheet-type")) {
+                case 'linux':
+                    cheatSheetTable.reload({
+                        url: '/js/data/linux.cheatsheet.json'
+                    })
+                    break
+                case 'win':
+                    cheatSheetTable.reload({
+                        url: '/js/data/win.cheatsheet.json'
+                    })
+                    break
+                case 'vim':
+                    cheatSheetTable.reload({
+                        url: '/js/data/vim.cheatsheet.json'
+                    })
+                    break
+            }
+        })
+    });
+
+    function isWindows() {
+        let userAgetn = window.navigator.userAgent.toLowerCase();
+        return userAgetn.indexOf('window') >= 0;
+    }
+</script>
+</body>
+</html>
