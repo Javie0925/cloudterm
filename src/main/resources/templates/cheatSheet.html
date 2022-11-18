@@ -24,11 +24,11 @@
 </head>
 <body>
 
-<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+<div class="layui-tab layui-tab-brief">
     <ul class="layui-tab-title mb-0">
-        <li id="linuxTab" class="layui-this cheatSheet" data-sheet-type="linux">Linux</li>
-        <li id="winTab" class="cheatSheet" data-sheet-type="win">Windows</li>
-        <li class="cheatSheet" data-sheet-type="vim">Vim</li>
+        <li id="linuxTab" class="layui-this cheatSheet" data-category="linux">Linux</li>
+        <li id="winTab" class="cheatSheet" data-category="windows">Windows</li>
+        <li class="cheatSheet" data-category="common">Common</li>
     </ul>
     <div class="layui-tab-content pt-0" style="height: 100px;">
         <div class="layui-tab-item layui-show">
@@ -49,10 +49,9 @@
     layui.use(['table'], function () {
         let table = layui.table, $ = layui.$, layer = layui.layer;
 
-        let url = '/js/data/linux.cheatsheet.json';
         let cheatSheetTable = table.render({
             elem: '#cheatSheet' // table id
-            , url: url
+            , url: "/tldr/category/linux"
             , skin: 'line'
             , method: 'get'
             , toolbar: '#topToolBar'
@@ -62,7 +61,7 @@
                 , icon: 'layui-icon-tips'
             }]
             , cols: [[
-                {field: 'name', title: 'CMD'}
+                {field: 'cmd', sort: true, width: 300, title: 'CMD'}
                 , {field: 'info', title: 'INFO'}
             ]]
         });
@@ -78,6 +77,7 @@
                     command,
                 })
             );
+            window.parent.layui.layer.closeAll();
         });
         table.on('row(cheatSheet)', function (obj) {
             //change row style after being selected
@@ -93,25 +93,39 @@
                         time: 5000
                     });
                     break
+                case 'search':
+                    let prefix = $("#searchInput").val()
+                    if (!prefix) return
+                    cheatSheetTable.reload({
+                        url: "/tldr/" + (window.category ? window.category : 'linux'),
+                        where:{
+                            prefix,
+                        }
+                    })
+                    $("#searchInput").val(prefix)
+                    break
             }
         })
 
         $(".cheatSheet").click(function (event) {
             let curr = $(event.target)
-            switch (curr.data("sheet-type")) {
+            switch (curr.data("category")) {
                 case 'linux':
+                    window.category = 'linux'
                     cheatSheetTable.reload({
-                        url: '/js/data/linux.cheatsheet.json'
+                        url: '/tldr/category/linux'
                     })
                     break
-                case 'win':
+                case 'windows':
+                    window.category = 'windows'
                     cheatSheetTable.reload({
-                        url: '/js/data/win.cheatsheet.json'
+                        url: '/tldr/category/windows'
                     })
                     break
-                case 'vim':
+                case 'common':
+                    window.category = 'common'
                     cheatSheetTable.reload({
-                        url: '/js/data/vim.cheatsheet.json'
+                        url: '/tldr/category/common'
                     })
                     break
             }

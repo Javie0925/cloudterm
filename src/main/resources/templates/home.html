@@ -20,14 +20,16 @@
     <style>
         /* style of scrollbar */
         ::-webkit-scrollbar {
-            width: 6px;   /* width: for crosswise  height: vertical */
+            width: 6px; /* width: for crosswise  height: vertical */
             background: black;
         }
+
         /* style of slot */
         ::-webkit-scrollbar-track {
-            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);    /* seldom used */
+            -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3); /* seldom used */
             border-radius: 3px;
         }
+
         /* scrollbar thumb */
         ::-webkit-scrollbar-thumb {
             border-radius: 3px;
@@ -41,7 +43,7 @@
     <strong>Cloud Terminal</strong>
 </h2>
 <div style="position: fixed;z-index: 10000;color: white;top: 0;right: 50%;">
-    <i id="tips" class="layui-icon layui-icon-triangle-d"
+    <i id="cheatsheet" class="layui-icon layui-icon-triangle-d"
        style="font-size: 25px; color: #ffffff; font-weight: bolder;opacity: 0.6"></i>
 </div>
 <div style="position: fixed;z-index: 10000;color: white;bottom: 0;right: 50%;">
@@ -49,6 +51,8 @@
        style="font-size: 25px; color: #ffffff; font-weight: bolder;opacity: 0.6"></i>
 </div>
 <div id="terminal"></div>
+<input id="tldrInput" class="layui-input border-5" placeholder="Enter a command and press enter to search"
+       style="z-index: 100000;display: none;width: 300px;background-color: #000000;border-color: #c15050;color: white"/>
 <script>
     let theme = {
         bgColor: '#c15050'
@@ -112,7 +116,7 @@
             }
         });
 
-        $("#tips").click(function (event) {
+        $("#cheatsheet").click(function (event) {
             layer.open({
                 type: 2 //page
                 , title: 'Cheat Sheets'
@@ -121,7 +125,7 @@
                 , maxmin: true
                 , content: '/?page=cheatSheet'
                 , zIndex: layer.zIndex //重点1
-                , anim: 1
+                , anim: 5
                 , success: function (layero, index) {
                     layer.setTop(layero); // keep the selected window on top
                     //recode index
@@ -145,6 +149,63 @@
             });
         })
 
+        $("#tldr").click(function (event) {
+            $(this).hide();
+            layer.open({
+                type: 1,
+                shade: false,
+                title: false,
+                offset: ['95%'], //[top,left]
+                css: {bottom: 20},
+                content: $('#tldrInput'),
+                cancel: function () {
+                    $("#tldr").show();
+                }
+            });
+        })
+
+        $("#tldrInput").keyup(function (event) {
+            if ('Enter' !== event.key) return;
+            let searchCmd = $(this).val();
+            if (!searchCmd) return;
+
+            $.ajax('/tldr/cmd/' + searchCmd,{
+                success:function (date){
+
+                }
+            })
+
+            layer.open({
+                type: 2 //page
+                , title: 'COMMAND INFO'
+                , area: ['60%', '70%'] // [width,height]
+                , shade: [0.8, '#393D49']
+                , maxmin: true
+                , content: '/tldr/cmd/' + searchCmd
+                , zIndex: layer.zIndex //重点1
+                , success: function (layero, index) {
+                    layer.setTop(layero); // keep the selected window on top
+                    //recode index
+                    layer.escIndex = layer.escIndex || [];
+                    layer.escIndex.unshift(index);
+                    //if being selected, put current layer index to top
+                    layero.on('mousedown', function () {
+                        var _index = layer.escIndex.indexOf(index);
+                        if (_index !== -1) {
+                            layer.escIndex.splice(_index, 1); //delete old index
+                        }
+                        layer.escIndex.unshift(index); //put index to the head
+                    });
+                }
+                , end: function () {
+                    //update index
+                    if (typeof layer.escIndex === 'object') {
+                        $("#tldrInput").val('')
+                    }
+                }
+            });
+        })
+
         // esc key event
         $(document).on('keyup', function (e) {
             if (e.keyCode === 27) {
@@ -152,7 +213,12 @@
             }
         });
     });
-    $("#tips").hover(function (event) {
+    $("#cheatsheet").hover(function (event) {
+        $(event.target).css("opacity", 1).css("color", theme.bgColor)
+    }, function (event) {
+        $(event.target).css("opacity", 0.6).css("color", "#ffffff")
+    })
+    $("#tldr").hover(function (event) {
         $(event.target).css("opacity", 1).css("color", theme.bgColor)
     }, function (event) {
         $(event.target).css("opacity", 0.6).css("color", "#ffffff")
