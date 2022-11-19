@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.kodedu.cloudterm.helper.Result;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -56,11 +57,21 @@ public class TldrPageController {
 
     @GetMapping("/{category}")
     public Result searchCmds(@PathVariable("category") String category, String prefix) {
+        Assert.hasLength(prefix.trim(), "search word can not be empty!");
+        String trimmedPrefix = prefix.trim();
         if (filePathMap.containsKey(category)) {
             List<JSONObject> list = filePathMap.get(category).entrySet()
                     .stream()
-                    .filter(en -> en.getKey().toLowerCase().startsWith(prefix.toLowerCase()))
-                    .sorted(Comparator.comparing(Map.Entry::getKey))
+                    .filter(en -> {
+                        String curr = en.getKey().toLowerCase();
+                        int index = 0;
+                        for (String c : trimmedPrefix.split("")) {
+                            index = curr.indexOf(c, index) + 1;
+                            if (index <= 0 || index > curr.length() + 1) return false;
+                        }
+                        return true;
+                    })
+                    .sorted(Comparator.comparingInt(e -> e.getKey().length()))
                     .map(en -> en.getValue())
                     .collect(Collectors.toList());
             return Result.success(list);

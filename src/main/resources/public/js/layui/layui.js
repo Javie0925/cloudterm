@@ -5543,7 +5543,7 @@ layui.define("form", function (e) {
         onlyIconControl: !1,
         isJump: !1,
         edit: !1,
-        text: {defaultNodeName: "\u672a\u547d\u540d", none: "\u65e0\u6570\u636e"}
+        text: {defaultNodeName: "\u672a\u547d\u540d", none: "No data."}//\u65e0\u6570\u636e
     }, b.prototype.reload = function (e) {
         var a = this;
         layui.each(e, function (e, i) {
@@ -5809,7 +5809,8 @@ layui.define(["laytpl", "form"], function (e) {
         value: [],
         showSearch: !1,
         id: "",
-        text: {none: "\u65e0\u6570\u636e", searchNone: "\u65e0\u5339\u914d\u6570\u636e"}
+        text: {none: "No data.", searchNone: "\u65e0\u5339\u914d\u6570\u636e"}
+        //text: {none: "\u65e0\u6570\u636e", searchNone: "\u65e0\u5339\u914d\u6570\u636e"}
     }, x.prototype.reload = function (e) {
         var t = this;
         t.config = a.extend({}, t.config, e), t.render()
@@ -5968,7 +5969,8 @@ layui.define(["laytpl", "laypage", "layer", "form", "util"], function (e) {
         cellMinWidth: 60,
         defaultToolbar: ["filter", "exports", "print"],
         autoSort: !0,
-        text: {none: "\u65e0\u6570\u636e"}
+        text: {none: "No data."}
+        //text: {none: "\u65e0\u6570\u636e"}
     }, H.prototype.render = function () {
         var e = this, a = e.config;
         if (a.elem = t(a.elem), a.where = a.where || {}, a.id = a.id || a.elem.attr("id") || e.index, a.request = t.extend({

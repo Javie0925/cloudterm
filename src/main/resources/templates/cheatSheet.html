@@ -26,9 +26,15 @@
 
 <div class="layui-tab layui-tab-brief">
     <ul class="layui-tab-title mb-0">
-        <li id="linuxTab" class="layui-this cheatSheet" data-category="linux">Linux</li>
-        <li id="winTab" class="cheatSheet" data-category="windows">Windows</li>
-        <li class="cheatSheet" data-category="common">Common</li>
+        <li id="linuxTab" class="layui-this cheatSheet fw-bold" data-category="linux">
+            <i class="layui-icon layui-icon-ios cheatSheet" data-category="linux">Linux</i>
+        </li>
+        <li id="winTab" class="cheatSheet" data-category="windows">
+            <i class="layui-icon layui-icon-windows cheatSheet" data-category="windows"></i>
+            <span class="fw-bold cheatSheet" data-category="windows">Windows</span></li>
+        <li class="cheatSheet" data-category="common">
+            <i class="layui-icon layui-icon-website cheatSheet fw-bold" data-category="common">Common</i>
+        </li>
     </ul>
     <div class="layui-tab-content pt-0" style="height: 100px;">
         <div class="layui-tab-item layui-show">
@@ -38,9 +44,9 @@
 </div>
 <script type="text/html" id="topToolBar">
     <div class="row align-items-center">
-        <input id="searchInput" class="layui-input col col-sm" type="search" name="key" placeholder="search cmd"/>
-        <button class="layui-btn layui-btn-primary col-1 border-0" lay-event="search">
-            <i class="layui-icon layui-icon-search" style="font-weight: bolder;font-size: 20px"></i>
+        <input id="searchInput" class="layui-input col col-sm" type="search" name="key" placeholder="search commands"/>
+        <button class="layui-btn layui-btn-primary col-1 border-0" style="width: 5% !important;" lay-event="search">
+            <i class="layui-icon layui-icon-search fw-bolder" style="font-size: 20px"></i>
         </button>
         <div class="col-6 col-xs-1"></div>
     </div>
@@ -61,7 +67,13 @@
                 , icon: 'layui-icon-tips'
             }]
             , cols: [[
-                {field: 'cmd', sort: true, width: 300, title: 'CMD'}
+                {
+                    field: 'cmd',
+                    sort: true,
+                    width: 300,
+                    title: 'CMD',
+                    templet: "<span><strong>{{ d.cmd }}</strong></span>"
+                }
                 , {field: 'info', title: 'INFO'}
             ]]
         });
@@ -98,7 +110,7 @@
                     if (!prefix) return
                     cheatSheetTable.reload({
                         url: "/tldr/" + (window.category ? window.category : 'linux'),
-                        where:{
+                        where: {
                             prefix,
                         }
                     })
@@ -130,6 +142,26 @@
                     break
             }
         })
+
+        // If not register periodically, the event listener will be
+        // disabled after being triggered once but I don't know why.
+        setInterval(function () {
+            $("#searchInput").keyup(function (event) {
+                let prefix = $(this).val();
+                if (!prefix) {
+                    cheatSheetTable.reload({
+                        url: "/tldr/category/" + (window.category ? window.category : 'linux')
+                    })
+                }
+                cheatSheetTable.reload({
+                    url: "/tldr/" + (window.category ? window.category : 'linux'),
+                    where: {
+                        prefix,
+                    }
+                })
+                $("#searchInput").val(prefix).focus()
+            })
+        }, 100)
     });
 
     function isWindows() {

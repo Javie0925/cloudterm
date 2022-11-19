@@ -52,7 +52,7 @@
 </div>
 <div id="terminal"></div>
 <input id="tldrInput" class="layui-input border-5" placeholder="Enter a command and press enter to search"
-       style="z-index: 100000;display: none;width: 300px;background-color: #000000;border-color: #c15050;color: white"/>
+       style="display: none;width: 300px;background-color: #000000;border-color: #c15050;color: white"/>
 <script>
     let theme = {
         bgColor: '#c15050'
@@ -160,6 +160,7 @@
                 content: $('#tldrInput'),
                 cancel: function () {
                     $("#tldr").show();
+                    $('#tldrInput').hide();
                 }
             });
         })
