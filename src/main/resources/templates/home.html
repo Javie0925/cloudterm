@@ -17,26 +17,19 @@
     <script src="js/xterm.min.js"></script>
     <script src="js/fullscreen.min.js"></script>
     <script src="js/main.js"></script>
+
+    <link rel="stylesheet" href="css/global.css">
     <style>
-        /* style of scrollbar */
         ::-webkit-scrollbar {
             width: 6px; /* width: for crosswise  height: vertical */
-            background: black;
+            background: black !important;
         }
 
-        /* style of slot */
-        ::-webkit-scrollbar-track {
-            -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3); /* seldom used */
-            border-radius: 3px;
-        }
-
-        /* scrollbar thumb */
-        ::-webkit-scrollbar-thumb {
-            border-radius: 3px;
-            height: 100px;
-            background-color: #8b8b8b;
+        .font-family-button {
+            margin: 0 0 10px !important;
         }
     </style>
+
 </head>
 <body>
 <h2 style="position: fixed;z-index: 10000;color: white;top: 2%;right: 2%;">
@@ -53,41 +46,114 @@
 <div id="terminal"></div>
 <input id="tldrInput" class="layui-input border-5" placeholder="Enter a command and press enter to search"
        style="display: none;width: 300px;background-color: #000000;border-color: #c15050;color: white"/>
+
+<div id="styleDropDownContainer" hidden>
+    <div class="layui-tab layui-tab-brief" lay-filter="styleDropDown" id="styleDropDown">
+        <ul class="layui-tab-title">
+            <li class="layui-this">Font Family</li>
+            <li>Font Size</li>
+        </ul>
+        <div class="layui-tab-content" style="height: 100px;">
+            <div class="layui-tab-item layui-show">
+                <button class="font-family-button layui-btn layui-btn-primary" onclick="fontFamily(this)"
+                        style="font-family: Consolas">Consolas
+                </button>
+                <button class="font-family-button layui-btn layui-btn-primary" onclick="fontFamily(this)"
+                        style="font-family: 'Adobe Devanagari'">
+                    Adobe Devanagari
+                </button>
+                <button class="font-family-button layui-btn layui-btn-primary" onclick="fontFamily(this)"
+                        style="font-family: 'Agency FB'">Agency
+                    FB
+                </button>
+                <button class="font-family-button layui-btn layui-btn-primary" onclick="fontFamily(this)"
+                        style="font-family: 'Droid Sans Mono', 'DejaVu Sans Mono', monospace">monospace
+                </button>
+                <button class="font-family-button layui-btn layui-btn-primary" onclick="fontFamily(this)"
+                        style='font-family: "Noto Serif", "DejaVu Serif", serif'>serif
+                </button>
+                <button class="font-family-button layui-btn layui-btn-primary" onclick="fontFamily(this)"
+                        style='font-family: "Open Sans", "DejaVu Sans", sans, serif'>sans
+                </button>
+
+                <button class="font-family-button layui-btn layui-btn-primary" onclick="fontFamily(this)"
+                        style='font-family: "Open Sans", "DejaVu Sans", sans-serif'>sans-serif
+                </button>
+
+                <button class="font-family-button layui-btn layui-btn-primary" onclick="fontFamily(this)"
+                        style='font-family: Algerian'>Algerian
+                </button>
+            </div>
+            <div class="layui-tab-item">内容2</div>
+        </div>
+    </div>
+</div>
 <script>
     let theme = {
         bgColor: '#c15050'
     };
+    layer.config({
+        extend: 'console-skin/style.css', //load customized skin style
+        skin: 'layui-skin-console'
+    });
+    // set terminal font family
+    let intervalIndex = setInterval(function () {
+        let activeFamily = localStorage.getItem("terminal-font-family")
+        if (activeFamily && $(".terminal").css("font-family") != activeFamily) {
+            $(".terminal").css("font-family", activeFamily)
+        } else {
+            clearInterval(intervalIndex)
+        }
+    }, 100);
     layui.use(['util'], function () {
-        let util = layui.util, $ = layui.$, layer = layui.layer;
+        let util = layui.util, $ = layui.$, layer = layui.layer, dropdown = layui.dropdown;
         //fixbar
         util.fixbar({
             bar1: {
+                title: "style",
+                icon: '&#xe639;'
+            },
+            bar2: {
                 title: "home",
                 icon: '&#xe68e;'
             }
-            , bar2: {
+            , bar3: {
                 title: "server list",
                 icon: '&#xe653;'
             }
-            , bar3: {
-                icon: '&#xe639;',
+            , bar4: {
+                icon: '&#xe640;',
                 title: "clear"
             }
             , css: {right: 20, bottom: 50}
             , bgcolor: theme.bgColor
             , click: function (type) {
                 if (type === 'bar1') {
-                    location.replace(location.origin);
+                    dropdown.render({
+                        elem: '#layui_fixbar1',
+                        align: 'left',
+                        content: $("#styleDropDownContainer").html(),
+                        style: 'width: 370px; height: 300px; padding: 0 15px; box-shadow: 1px 1px 30px rgb(0 0 0 / 12%);',
+                        ready: function () {
+                            layui.use('element', function (element) {
+                                element.render('tab');
+                            });
+                        }
+                    });
+
                 } else if (type === 'bar2') {
+                    location.replace(location.origin);
+                } else if (type === 'bar3') {
                     let that = this;
                     //多窗口模式，层叠置顶
                     layer.open({
                         type: 2 //page
                         , title: 'Server List'
                         , area: ['60%', '70%'] // [width,height]
-                        , shade: [0.8, '#393D49']
+                        , shade: [0.5, '#393D49']
                         , maxmin: true
                         , content: '/?page=serverList'
+                        , shadeClose: true
                         , zIndex: layer.zIndex //重点1
                         , success: function (layero, index) {
                             layer.setTop(layero); // keep the selected window on top
@@ -110,7 +176,7 @@
                             }
                         }
                     });
-                } else if (type === 'bar3') {
+                } else if (type === 'bar4') {
                     window.term.clear();
                 }
             }
@@ -121,11 +187,13 @@
                 type: 2 //page
                 , title: 'Cheat Sheets'
                 , area: ['60%', '70%'] // [width,height]
-                , shade: [0.8, '#393D49']
+                , shade: [0.5, '#393D49']
                 , maxmin: true
                 , content: '/?page=cheatSheet'
                 , zIndex: layer.zIndex //重点1
-                , anim: 5
+                , shadeClose: true
+                , anim: 0
+                , skin: 'layui-skin-console'
                 , success: function (layero, index) {
                     layer.setTop(layero); // keep the selected window on top
                     //recode index
@@ -155,12 +223,14 @@
                 type: 1,
                 shade: false,
                 title: false,
-                offset: ['95%'], //[top,left]
+                offset: ['93%'], //[top,left]
                 css: {bottom: 20},
                 content: $('#tldrInput'),
                 cancel: function () {
                     $("#tldr").show();
-                    $('#tldrInput').hide();
+                    setTimeout(function () {
+                        $('#tldrInput').hide();
+                    }, 200)
                 }
             });
         })
@@ -170,19 +240,15 @@
             let searchCmd = $(this).val();
             if (!searchCmd) return;
 
-            $.ajax('/tldr/cmd/' + searchCmd,{
-                success:function (date){
-
-                }
-            })
-
             layer.open({
                 type: 2 //page
-                , title: 'COMMAND INFO'
-                , area: ['60%', '70%'] // [width,height]
-                , shade: [0.8, '#393D49']
-                , maxmin: true
-                , content: '/tldr/cmd/' + searchCmd
+                , title: false
+                , area: ['40%', '70%'] // [width,height]
+                , shade: [0.5, '#393D49']
+                , maxmin: false
+                , fixed: false
+                , shadeClose: true
+                , content: '/?page=tldr&cmd=' + searchCmd
                 , zIndex: layer.zIndex //重点1
                 , success: function (layero, index) {
                     layer.setTop(layero); // keep the selected window on top
@@ -213,17 +279,23 @@
                 layer.close(layer.escIndex ? layer.escIndex[0] : 0);
             }
         });
+        $("#cheatsheet").hover(function (event) {
+            $(event.target).css("opacity", 1).css("color", theme.bgColor)
+        }, function (event) {
+            $(event.target).css("opacity", 0.6).css("color", "#ffffff")
+        })
+        $("#tldr").hover(function (event) {
+            $(event.target).css("opacity", 1).css("color", theme.bgColor)
+        }, function (event) {
+            $(event.target).css("opacity", 0.6).css("color", "#ffffff")
+        })
+
     });
-    $("#cheatsheet").hover(function (event) {
-        $(event.target).css("opacity", 1).css("color", theme.bgColor)
-    }, function (event) {
-        $(event.target).css("opacity", 0.6).css("color", "#ffffff")
-    })
-    $("#tldr").hover(function (event) {
-        $(event.target).css("opacity", 1).css("color", theme.bgColor)
-    }, function (event) {
-        $(event.target).css("opacity", 0.6).css("color", "#ffffff")
-    })
+
+    function fontFamily(that) {
+        localStorage.setItem('terminal-font-family', $(that).css('font-family'));
+        $(".terminal").css('font-family', $(that).css('font-family'));
+    }
 </script>
 </body>
 </html>

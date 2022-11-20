@@ -1,0 +1,70 @@
+.layui-table-tips-c:before {
+    position: relative;
+    right: 1px;
+    bottom: 3px;
+}
+
+body {
+    background-color: var(--console-bg);
+    color: var(--console-color);
+}
+
+.layui-table-init {
+    background-color: var(--console-bg) !important;
+}
+
+.layui-table tr {
+    background-color: var(--console-bg);
+    color: var(--console-color);
+}
+
+.layui-table-hover {
+    background-color: #888 !important;
+    color: black !important;
+}
+
+.layui-table-tool {
+    background-color: var(--console-bg);
+    color: var(--console-color);
+    border: none !important;
+}
+
+.layui-table-view {
+    border: none;
+}
+
+.layui-table-header {
+    background-color: var(--console-bg);
+    border: none;
+}
+
+#searchInput {
+    background-color: var(--console-bg);
+    color: var(--console-color);
+    border-color: var(--console-color);
+}
+
+.layui-tab-title {
+    border-bottom-style: none !important;
+}
+
+tr {
+    background-color: var(--console-bg) !important;
+    font-weight: bolder !important;
+}
+
+.layui-inline {
+    border: none !important;
+}
+
+.layui-table-cell {
+    font-weight: bolder;
+}
+
+.layui-icon-tips {
+    color: var(--console-color);
+}
+
+.layui-icon-ok {
+    opacity: 0.5;
+}

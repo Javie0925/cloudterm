@@ -8,18 +8,15 @@
     <link rel="shortcut icon" href="favicon.png">
     <title>Server List</title>
 
+    <link rel="stylesheet" href="css/global.css">
+
+
     <link rel="stylesheet" href="js/layui/css/layui.css">
     <script src="js/layui/layui.js"></script>
 
     <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/console.css">
     <script src="js/bootstrap.bundle.min.js"></script>
-    <style>
-        .layui-table-tips-c:before {
-            position: relative;
-            right: 1px;
-            bottom: 3px;
-        }
-    </style>
 
 </head>
 <body>
@@ -55,10 +52,15 @@
     layui.use(['table'], function () {
         let table = layui.table, $ = layui.$, layer = layui.layer;
 
+        layer.config({
+            extend: 'console-skin/style.css', //加载您的扩展样式
+            skin: 'layui-skin-console'
+        });
+
         let cheatSheetTable = table.render({
             elem: '#cheatSheet' // table id
             , url: "/tldr/category/linux"
-            , skin: 'line'
+            , skin: 'nob'
             , method: 'get'
             , toolbar: '#topToolBar'
             , defaultToolbar: [{ //customize
@@ -70,12 +72,34 @@
                 {
                     field: 'cmd',
                     sort: true,
-                    width: 300,
+                    width: 200,
                     title: 'CMD',
+                    unresize: true,
                     templet: "<span><strong>{{ d.cmd }}</strong></span>"
                 }
-                , {field: 'info', title: 'INFO'}
+                , {field: 'info', title: 'INFO', unresize: true}
             ]]
+            , done: function () {
+                $("#searchInput").keyup(function (event) {
+                    if ('Enter' !== event.key) return;
+                    let prefix = $(this).val();
+                    layer.load(1);
+                    if (!prefix) {
+                        cheatSheetTable.reload({
+                            url: "/tldr/category/" + (window.category ? window.category : 'linux')
+                        })
+                    } else {
+                        cheatSheetTable.reload({
+                            url: "/tldr/" + (window.category ? window.category : 'linux'),
+                            where: {
+                                prefix,
+                            }
+                        })
+                        $("#searchInput").val(prefix).focus()
+                    }
+                    layer.closeAll('loading');
+                })
+            }
         });
 
         //row click event
@@ -142,26 +166,6 @@
                     break
             }
         })
-
-        // If not register periodically, the event listener will be
-        // disabled after being triggered once but I don't know why.
-        setInterval(function () {
-            $("#searchInput").keyup(function (event) {
-                let prefix = $(this).val();
-                if (!prefix) {
-                    cheatSheetTable.reload({
-                        url: "/tldr/category/" + (window.category ? window.category : 'linux')
-                    })
-                }
-                cheatSheetTable.reload({
-                    url: "/tldr/" + (window.category ? window.category : 'linux'),
-                    where: {
-                        prefix,
-                    }
-                })
-                $("#searchInput").val(prefix).focus()
-            })
-        }, 100)
     });
 
     function isWindows() {

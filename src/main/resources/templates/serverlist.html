@@ -13,12 +13,31 @@
 
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <script src="js/bootstrap.bundle.min.js"></script>
+
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/console.css">
+
+
     <style>
         .layui-table-tips-c:before {
             position: relative;
             right: 1px;
             bottom: 3px;
         }
+    </style>
+
+    <style>
+        .modal-header,.modal-body,.modal-content {
+            background-color: var(--console-bg);
+            color: var(--console-color);
+            border: none;
+        }
+        .layui-input,.layui-textarea{
+            background-color: var(--console-color);
+            color: var(--console-bg);
+            border: none;
+        }
+
     </style>
 
 </head>
@@ -180,7 +199,7 @@
         let serverListTable = table.render({
             elem: '#serverList' // table id
             , url: '/server/list'
-            //, skin: 'line'
+            , skin: 'nob'
             , method: 'get'
             , toolbar: '#topToolBar'
             , defaultToolbar: [{ //customize
@@ -312,7 +331,7 @@
                     serverListTable.reload()
                     break
                 case 'tips':
-                    layer.tips('Tips: double click a row to edit the server information', '.layui-table-tool-self', {
+                    layer.tips('Tips: Double click a row to edit the server information', '.layui-table-tool-self', {
                         tips: 4,
                         time: 5000
                     });

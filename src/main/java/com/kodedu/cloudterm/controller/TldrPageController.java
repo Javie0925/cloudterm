@@ -24,8 +24,8 @@ public class TldrPageController {
 
     Map<String, Map<String, JSONObject>> filePathMap = new HashMap<>();
 
-    @GetMapping("/cmd/{cmd}")
-    public Result getCmdDetail(@PathVariable String cmd) throws IOException {
+    @GetMapping("/cmd")
+    public Result getCmdDetail(String cmd) throws IOException {
 
         for (Map.Entry<String, Map<String, JSONObject>> entry : filePathMap.entrySet()) {
             if (entry.getValue().containsKey(cmd)) {

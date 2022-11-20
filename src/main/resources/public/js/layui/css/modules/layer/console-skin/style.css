@@ -1,0 +1,37 @@
+.layui-skin-console[type=dialog] {
+    min-width: 280px
+}
+
+.layui-skin-console .layui-layer-title {
+    background: #2d2d2d;
+    color: #fff;
+    font-family: Consolas;
+    font-size: 25px;
+    border: none
+}
+.layui-skin-console .layui-layer-ico {
+    color: #fff;
+    font-family: Consolas;
+    border: none
+}
+
+.layui-skin-console .layui-layer-btn {
+    padding: 5px 10px 10px;
+    text-align: right;
+    border-top: 1px solid #E9E7E7
+}
+
+.layui-skin-console .layui-layer-btn a {
+    background: #fff;
+    border-color: #E9E7E7;
+    color: #333
+}
+.layui-skin-console .layui-layer-btn a {
+    background: #fff;
+    border-color: #E9E7E7;
+    color: #333
+}
+
+.layui-skin-console .layui-layer-btn .layui-layer-btn1 {
+    background: #C9C5C5
+}
