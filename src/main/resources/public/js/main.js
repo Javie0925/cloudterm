@@ -1,15 +1,13 @@
 const style = {};
 
 const currentGeometry = () => {
-    if (!style.width || !style.height) {
-        const text = $('.xterm-helpers style').text();
-        let arr = text.split('xterm-normal-char{width:');
-        style.width = parseFloat(arr[1]);
-        arr = text.split('div{height:');
-        style.height = parseFloat(arr[1]);
-    }
+    const text = $('.xterm-helpers style').text();
+    let arr = text.split('xterm-normal-char{width:');
+    style.width = parseFloat(arr[1]);
+    arr = text.split('div{height:');
+    style.height = parseFloat(arr[1]);
     const columns = parseInt(window.innerWidth / style.width, 10) - 1;
-    const rows = parseInt(window.innerHeight / style.height, 10);
+    const rows = parseInt(window.innerHeight / style.height, 10) ;
     return {columns, rows};
 };
 
@@ -19,7 +17,7 @@ const action = (type, data) =>
         ...data,
     });
 
-const resizeTerm = (term, ws) => {
+const resizeTerm = () => {
     const {columns, rows} = currentGeometry();
     if (columns !== term.geometry[0] || rows !== term.geometry[1]) {
         console.log(`resizing term to ${JSON.stringify({columns, rows})}`);

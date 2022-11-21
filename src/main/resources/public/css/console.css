@@ -68,3 +68,9 @@ tr {
 .layui-icon-ok {
     opacity: 0.5;
 }
+
+.layui-table-tips-main {
+    background-color: var(--console-bg) !important;
+    color: var(--console-color) !important;
+    border-color: var(--console-color);
+}

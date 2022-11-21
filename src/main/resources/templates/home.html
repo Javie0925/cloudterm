@@ -20,18 +20,34 @@
 
     <link rel="stylesheet" href="css/global.css">
     <style>
-        ::-webkit-scrollbar {
-            width: 6px; /* width: for crosswise  height: vertical */
-            background: black !important;
+        .font-family-button {
+            margin: 0 2px 10px 0 !important;
+            color: var(--console-color);
+            border-color: var(--console-color);
         }
 
-        .font-family-button {
-            margin: 0 0 10px !important;
+        .layui-btn-primary:hover {
+            color: white !important;
+        }
+
+        .layui-tab-title {
+            border-bottom-style: none;
+            font-weight: bolder;
+        }
+
+        .layui-field-title {
+            margin: 0;
+            color: var(--console-color);
+            border-color: var(--console-color) !important;
+        }
+
+        .layui-field-title legend {
+            font-size: 15px;
         }
     </style>
 
 </head>
-<body>
+<body style="background-color: black">
 <h2 style="position: fixed;z-index: 10000;color: white;top: 2%;right: 2%;">
     <strong>Cloud Terminal</strong>
 </h2>
@@ -53,38 +69,30 @@
             <li class="layui-this">Font Family</li>
             <li>Font Size</li>
         </ul>
-        <div class="layui-tab-content" style="height: 100px;">
-            <div class="layui-tab-item layui-show">
+        <div class="layui-tab-content" style="overflow: scroll">
+            <div class="layui-tab-item layui-show" id="font-family-list">
                 <button class="font-family-button layui-btn layui-btn-primary" onclick="fontFamily(this)"
-                        style="font-family: Consolas">Consolas
-                </button>
-                <button class="font-family-button layui-btn layui-btn-primary" onclick="fontFamily(this)"
-                        style="font-family: 'Adobe Devanagari'">
-                    Adobe Devanagari
-                </button>
-                <button class="font-family-button layui-btn layui-btn-primary" onclick="fontFamily(this)"
-                        style="font-family: 'Agency FB'">Agency
-                    FB
-                </button>
-                <button class="font-family-button layui-btn layui-btn-primary" onclick="fontFamily(this)"
-                        style="font-family: 'Droid Sans Mono', 'DejaVu Sans Mono', monospace">monospace
-                </button>
-                <button class="font-family-button layui-btn layui-btn-primary" onclick="fontFamily(this)"
-                        style='font-family: "Noto Serif", "DejaVu Serif", serif'>serif
-                </button>
-                <button class="font-family-button layui-btn layui-btn-primary" onclick="fontFamily(this)"
-                        style='font-family: "Open Sans", "DejaVu Sans", sans, serif'>sans
-                </button>
-
-                <button class="font-family-button layui-btn layui-btn-primary" onclick="fontFamily(this)"
-                        style='font-family: "Open Sans", "DejaVu Sans", sans-serif'>sans-serif
-                </button>
-
-                <button class="font-family-button layui-btn layui-btn-primary" onclick="fontFamily(this)"
-                        style='font-family: Algerian'>Algerian
+                        style="font-family: courier-new,courier,monospace">Default
                 </button>
             </div>
-            <div class="layui-tab-item">内容2</div>
+            <div class="layui-tab-item" id="font-size-list">
+                <fieldset class="layui-elem-field layui-field-title" style="margin-bottom: 10px;">
+                    <legend>Font Weight</legend>
+                </fieldset>
+                <div id="font-weight-button-container">
+                    <button class="font-family-button layui-btn layui-btn-primary" onclick="fontWeight(this)"
+                            style="font-size: 16px;font-weight: normal">Default
+                    </button>
+                </div>
+                <fieldset class="layui-elem-field layui-field-title" style="margin-bottom: 10px;">
+                    <legend>Font Size</legend>
+                </fieldset>
+                <div id="font-family-button-container">
+                    <button class="font-family-button layui-btn layui-btn-primary" onclick="fontSize(this)"
+                            style="font-size: 16px">Default
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -96,15 +104,55 @@
         extend: 'console-skin/style.css', //load customized skin style
         skin: 'layui-skin-console'
     });
-    // set terminal font family
+
+    // init terminal font family
     let intervalIndex = setInterval(function () {
-        let activeFamily = localStorage.getItem("terminal-font-family")
-        if (activeFamily && $(".terminal").css("font-family") != activeFamily) {
-            $(".terminal").css("font-family", activeFamily)
+        let activeFamily = localStorage.getItem("terminal-font-family") ? localStorage.getItem("terminal-font-family") : 'courier-new,courier,monospace'
+        let activeSize = localStorage.getItem("terminal-font-size") ? localStorage.getItem("terminal-font-size") : '14px'
+        let activeWeight = localStorage.getItem("terminal-font-weight") ? localStorage.getItem("terminal-font-weight") : 'normal'
+        if ($(".terminal").css("font-family") != activeFamily
+            || $(".terminal").css("font-size") != activeSize
+            || $(".terminal").css("font-weight") != activeWeight) {
+
+            $(".terminal").css("font-family", activeFamily);
+            $(".terminal").css("font-size", activeSize);
+            $(".terminal").css("font-weight", activeWeight);
+            resizeTerm();
         } else {
             clearInterval(intervalIndex)
         }
     }, 100);
+
+    //init font family list
+    $.ajax("js/data/font-family.json", {
+        success: function (res) {
+            let list = eval(res)
+            //
+            for (const family of list) {
+                $("#font-family-list").append(
+                    '<button class="font-family-button layui-btn layui-btn-primary" onclick="fontFamily(this)" style="font-family: ' + family + '">' + family + '</button>'
+                )
+            }
+
+        }
+    })
+
+    //init font size list
+    for (let i = 10; i <= 35; i++) {
+        $("#font-family-button-container").append(
+            '<button class="font-family-button layui-btn layui-btn-primary" onclick="fontSize(this)" '
+                .concat('style="font-size: ' + i + 'px">' + i + '</button>')
+        )
+    }
+
+    // init font weight list
+    for (let i = 100; i <= 900; i += 100) {
+        $("#font-weight-button-container").append(
+            '<button class="font-family-button layui-btn layui-btn-primary" onclick="fontWeight(this)" '
+                .concat('style="font-weight: ' + i + '">' + i + '</button>')
+        )
+    }
+
     layui.use(['util'], function () {
         let util = layui.util, $ = layui.$, layer = layui.layer, dropdown = layui.dropdown;
         //fixbar
@@ -133,7 +181,7 @@
                         elem: '#layui_fixbar1',
                         align: 'left',
                         content: $("#styleDropDownContainer").html(),
-                        style: 'width: 370px; height: 300px; padding: 0 15px; box-shadow: 1px 1px 30px rgb(0 0 0 / 12%);',
+                        style: 'width: 450px; height: 400px; padding: 0 15px; box-shadow: 1px 1px 30px rgb(0 0 0 / 12%);overflow:scroll;background-color:var(--console-bg);border:none',
                         ready: function () {
                             layui.use('element', function (element) {
                                 element.render('tab');
@@ -295,6 +343,19 @@
     function fontFamily(that) {
         localStorage.setItem('terminal-font-family', $(that).css('font-family'));
         $(".terminal").css('font-family', $(that).css('font-family'));
+        resizeTerm()
+    }
+
+    function fontSize(that) {
+        localStorage.setItem('terminal-font-size', $(that).css('font-size'));
+        $(".terminal").css('font-size', $(that).css('font-size'));
+        resizeTerm()
+    }
+
+    function fontWeight(that) {
+        localStorage.setItem('terminal-font-weight', $(that).css('font-weight'));
+        $(".terminal").css('font-weight', $(that).css('font-weight'));
+        resizeTerm()
     }
 </script>
 </body>

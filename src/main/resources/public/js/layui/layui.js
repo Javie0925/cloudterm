@@ -4197,8 +4197,8 @@ layui.define("jquery", function (e) {
                     e.bar1 ? '<li class="layui-icon" id="layui_fixbar1" lay-type="bar1" style="' + e.bgcolor + '" title="' + (e.bar1.title ? e.bar1.title : '') + '">' + (e.bar1.icon ? e.bar1.icon : c[0]) + "</li>" : "",
                     e.bar2 ? '<li class="layui-icon" id="layui_fixbar2" lay-type="bar2" style="' + e.bgcolor + '" title="' + (e.bar2.title ? e.bar2.title : '') + '">' + (e.bar2.icon ? e.bar2.icon : c[1]) + "</li>" : "",
                     e.bar3 ? '<li class="layui-icon" id="layui_fixbar3" lay-type="bar3" style="' + e.bgcolor + '" title="' + (e.bar3.title ? e.bar3.title : '') + '">' + (e.bar3.icon ? e.bar3.icon : c[2]) + "</li>" : "",
-                    e.bar4 ? '<li class="layui-icon" id="layui_fixbar4" lay-type="bar4" style="' + e.bgcolor + '" title="' + (e.bar4.title ? e.bar4.title : '') + '">' + (e.bar4.icon ? e.bar3.icon : c[3]) + "</li>" : "",
-                    e.bar5 ? '<li class="layui-icon" id="layui_fixbar5" lay-type="bar5" style="' + e.bgcolor + '" title="' + (e.bar5.title ? e.bar5.title : '') + '">' + (e.bar5.icon ? e.bar3.icon : c[4]) + "</li>" : "",
+                    e.bar4 ? '<li class="layui-icon" id="layui_fixbar4" lay-type="bar4" style="' + e.bgcolor + '" title="' + (e.bar4.title ? e.bar4.title : '') + '">' + (e.bar4.icon ? e.bar4.icon : c[3]) + "</li>" : "",
+                    e.bar5 ? '<li class="layui-icon" id="layui_fixbar5" lay-type="bar5" style="' + e.bgcolor + '" title="' + (e.bar5.title ? e.bar5.title : '') + '">' + (e.bar5.icon ? e.bar4.icon : c[4]) + "</li>" : "",
                     '<li class="layui-icon ' + a + '" lay-type="top" style="' + e.bgcolor + '">' + c[5] + "</li>", "</ul>"
                 ].join("")),
                 u = g.find("." + a), s = function () {
