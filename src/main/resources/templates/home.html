@@ -130,7 +130,8 @@
             //
             for (const family of list) {
                 $("#font-family-list").append(
-                    '<button class="font-family-button layui-btn layui-btn-primary" onclick="fontFamily(this)" style="font-family: ' + family + '">' + family + '</button>'
+                    '<button class="font-family-button layui-btn layui-btn-primary" onclick="fontFamily(this)" style="font-family: '
+                    + family + '">' + family + '</button>'
                 )
             }
 
@@ -181,7 +182,8 @@
                         elem: '#layui_fixbar1',
                         align: 'left',
                         content: $("#styleDropDownContainer").html(),
-                        style: 'width: 450px; height: 400px; padding: 0 15px; box-shadow: 1px 1px 30px rgb(0 0 0 / 12%);overflow:scroll;background-color:var(--console-bg);border:none',
+                        style: 'width: 450px; height: 400px; padding: 0 15px; box-shadow: 1px 1px 30px rgb(0 0 0 / 12%);' +
+                            'overflow:scroll;background-color:var(--console-bg);border:none',
                         ready: function () {
                             layui.use('element', function (element) {
                                 element.render('tab');
@@ -196,7 +198,7 @@
                     //多窗口模式，层叠置顶
                     layer.open({
                         type: 2 //page
-                        , title: 'Server List'
+                        , title: 'Session List'
                         , area: ['60%', '70%'] // [width,height]
                         , shade: [0.5, '#393D49']
                         , maxmin: true

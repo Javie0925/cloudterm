@@ -7,7 +7,7 @@ const currentGeometry = () => {
     arr = text.split('div{height:');
     style.height = parseFloat(arr[1]);
     const columns = parseInt(window.innerWidth / style.width, 10) - 1;
-    const rows = parseInt(window.innerHeight / style.height, 10) ;
+    const rows = parseInt(window.innerHeight / style.height, 10);
     return {columns, rows};
 };
 
@@ -66,10 +66,22 @@ $(() => {
             resizeTerm(term, ws);
             term.resized = true;
         }
-        let data = JSON.parse(e.data);
-        switch (data.type) {
-            case 'TERMINAL_PRINT':
-                term.write(data.text);
+        if (typeof (e.data) == "string") { // text message
+            let data = JSON.parse(e.data);
+            switch (data.type) {
+                case 'TERMINAL_PRINT':
+                    term.write(data.text);
+            }
+        } else { // file download
+            let reader = new FileReader();
+            reader.onload = function (e) {
+                if (e.target.readyState == FileReader.DONE) {
+                    let url = e.target.result;
+                    let img = document.getElementById("imgDiv");
+                    img.innerHTML = "<img src = " + url + " />";
+                }
+            }
+            reader.readAsDataURL(e.data);
         }
     };
 
