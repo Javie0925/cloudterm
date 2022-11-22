@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 public class LocalFileService {
 
     private static final List<FileComponent> EMPTY_LIST = new ArrayList<>();
+    private static final File[] EMPTY_FILE_ARRAY = new File[0];
 
     /**
      * list root files and their child files
@@ -25,7 +26,8 @@ public class LocalFileService {
     public List<FileComponent> listFilesByPath(String path) {
         File file = new File(path);
         Assert.isTrue(file.exists(), "file path does not exists.");
-        if (file.isFile()) return EMPTY_LIST;
+        if (file.isFile() || Optional.ofNullable(file.listFiles()).orElse(EMPTY_FILE_ARRAY).length == 0)
+            return EMPTY_LIST;
         return toFileComponents(file.listFiles());
     }
 
@@ -35,27 +37,26 @@ public class LocalFileService {
                 .map(f ->
                         FileComponent.builder().absolutePath(f.getAbsolutePath())
                                 .name(f.getName())
-                                .freeSpace(f.getFreeSpace())
-                                .usableSpace(f.getUsableSpace())
-                                .totalSpace(f.getTotalSpace())
+                                .size(f.length())
                                 .isDirectory(f.isDirectory())
                                 .absolutePath(f.getAbsolutePath())
                                 .lastModified(f.lastModified())
-                                .children(
-                                        Arrays.stream(f.listFiles()).map(_f ->
-                                                FileComponent.builder().absolutePath(_f.getAbsolutePath())
-                                                        .name(_f.getName())
-                                                        .freeSpace(_f.getFreeSpace())
-                                                        .usableSpace(_f.getUsableSpace())
-                                                        .totalSpace(_f.getTotalSpace())
-                                                        .isDirectory(_f.isDirectory())
-                                                        .absolutePath(_f.getAbsolutePath())
-                                                        .lastModified(_f.lastModified())
-                                                        .build()
-                                        ).collect(Collectors.toList())
-                                ).build()
+                                .parentName(Objects.nonNull(f.getParentFile()) ? f.getParentFile().getName() : null)
+                                .parentAbsolutePath(Objects.nonNull(f.getParentFile()) ? f.getParentFile().getAbsolutePath() : null)
+                                .childNum(Optional.ofNullable(f.listFiles()).orElse(new File[0]).length)
+                                .build()
                 )
-                .sorted(Comparator.comparing(FileComponent::getAbsolutePath))
+                .sorted((f1, f2) -> {
+                    if (f1.isDirectory() && f2.isDirectory()) {
+                        return f1.getName().compareTo(f2.getName());
+                    } else if (!f1.isDirectory() && !f2.isDirectory()) {
+                        return f1.getName().compareTo(f2.getName());
+                    } else if (f1.isDirectory()) {
+                        return -1;
+                    } else {
+                        return 1;
+                    }
+                })
                 .collect(Collectors.toList());
     }
 }

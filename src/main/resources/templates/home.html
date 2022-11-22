@@ -60,8 +60,8 @@
        style="font-size: 25px; color: #ffffff; font-weight: bolder;opacity: 0.6"></i>
 </div>
 <div id="terminal"></div>
-<input id="tldrInput" class="layui-input border-5" placeholder="Enter a command and press enter to search"
-       style="display: none;width: 300px;background-color: #000000;border-color: #c15050;color: white"/>
+<input id="tldrInput" class="layui-input border-5" placeholder="Tldr Search"
+       style="display: none;width: 300px;background-color: #000000;border-color: #c15050;color: var(--console-color)"/>
 
 <div id="styleDropDownContainer" hidden>
     <div class="layui-tab layui-tab-brief" lay-filter="styleDropDown" id="styleDropDown">
@@ -81,7 +81,13 @@
                 </fieldset>
                 <div id="font-weight-button-container">
                     <button class="font-family-button layui-btn layui-btn-primary" onclick="fontWeight(this)"
-                            style="font-size: 16px;font-weight: normal">Default
+                            style="font-size: 16px;font-weight: normal">Normal
+                    </button>
+                    <button class="font-family-button layui-btn layui-btn-primary" onclick="fontWeight(this)"
+                            style="font-size: 16px;font-weight: bold">Bold
+                    </button>
+                    <button class="font-family-button layui-btn layui-btn-primary" onclick="fontWeight(this)"
+                            style="font-size: 16px;font-weight: bolder">Bolder
                     </button>
                 </div>
                 <fieldset class="layui-elem-field layui-field-title" style="margin-bottom: 10px;">
@@ -100,10 +106,6 @@
     let theme = {
         bgColor: '#c15050'
     };
-    layer.config({
-        extend: 'console-skin/style.css', //load customized skin style
-        skin: 'layui-skin-console'
-    });
 
     // init terminal font family
     let intervalIndex = setInterval(function () {
@@ -146,38 +148,45 @@
         )
     }
 
-    // init font weight list
-    for (let i = 100; i <= 900; i += 100) {
-        $("#font-weight-button-container").append(
-            '<button class="font-family-button layui-btn layui-btn-primary" onclick="fontWeight(this)" '
-                .concat('style="font-weight: ' + i + '">' + i + '</button>')
-        )
-    }
-
     layui.use(['util'], function () {
         let util = layui.util, $ = layui.$, layer = layui.layer, dropdown = layui.dropdown;
+
+        layer.config({
+            extend: 'console-skin/style.css', //load customized skin style
+            skin: 'layui-skin-console'
+        });
+
         //fixbar
         util.fixbar({
             bar1: {
                 title: "style",
-                icon: '&#xe639;'
+                icon: '&#xe639;',
+                type: "style"
             },
             bar2: {
+                title: "file",
+                icon: '&#xe655;',
+                type: "file"
+            },
+            bar3: {
                 title: "home",
-                icon: '&#xe68e;'
-            }
-            , bar3: {
-                title: "server list",
-                icon: '&#xe653;'
+                icon: '&#xe68e;',
+                type: "home"
             }
             , bar4: {
+                title: "server list",
+                icon: '&#xe653;',
+                type: "session"
+            }
+            , bar5: {
                 icon: '&#xe640;',
-                title: "clear"
+                title: "clear",
+                type: "clear"
             }
             , css: {right: 20, bottom: 50}
             , bgcolor: theme.bgColor
             , click: function (type) {
-                if (type === 'bar1') {
+                if (type === 'style') {
                     dropdown.render({
                         elem: '#layui_fixbar1',
                         align: 'left',
@@ -191,11 +200,10 @@
                         }
                     });
 
-                } else if (type === 'bar2') {
+                } else if (type === 'home') {
                     location.replace(location.origin);
-                } else if (type === 'bar3') {
-                    let that = this;
-                    //多窗口模式，层叠置顶
+                } else if (type === 'session') {
+                    //open a window
                     layer.open({
                         type: 2 //page
                         , title: 'Session List'
@@ -204,7 +212,7 @@
                         , maxmin: true
                         , content: '/?page=serverList'
                         , shadeClose: true
-                        , zIndex: layer.zIndex //重点1
+                        , zIndex: layer.zIndex // z-index
                         , success: function (layero, index) {
                             layer.setTop(layero); // keep the selected window on top
                             //recode index
@@ -226,8 +234,39 @@
                             }
                         }
                     });
-                } else if (type === 'bar4') {
+                } else if (type === 'clear') {
                     window.term.clear();
+                } else if (type === 'file') {
+                    layer.open({
+                        type: 2 //page
+                        , title: 'File Manage'
+                        , area: ['60%', '70%'] // [width,height]
+                        , shade: [0.5, '#393D49']
+                        , maxmin: true
+                        , content: '/?page=fileManage'
+                        , shadeClose: true
+                        , zIndex: layer.zIndex // z-index
+                        , success: function (layero, index) {
+                            layer.setTop(layero); // keep the selected window on top
+                            //recode index
+                            layer.escIndex = layer.escIndex || [];
+                            layer.escIndex.unshift(index);
+                            //if being selected, put current layer index to top
+                            layero.on('mousedown', function () {
+                                var _index = layer.escIndex.indexOf(index);
+                                if (_index !== -1) {
+                                    layer.escIndex.splice(_index, 1); //delete old index
+                                }
+                                layer.escIndex.unshift(index); //put index to the head
+                            });
+                        }
+                        , end: function () {
+                            //update index
+                            if (typeof layer.escIndex === 'object') {
+                                layer.escIndex.splice(0, 1);
+                            }
+                        }
+                    });
                 }
             }
         });
@@ -300,7 +339,7 @@
                 , fixed: false
                 , shadeClose: true
                 , content: '/?page=tldr&cmd=' + searchCmd
-                , zIndex: layer.zIndex //重点1
+                , zIndex: layer.zIndex //
                 , success: function (layero, index) {
                     layer.setTop(layero); // keep the selected window on top
                     //recode index
