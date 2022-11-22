@@ -4,12 +4,12 @@ import com.kodedu.cloudterm.dao.entity.FileComponent;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import java.io.File;
+import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class LocalFileService {
+public class LocalFileService implements FileService {
 
     private static final List<FileComponent> EMPTY_LIST = new ArrayList<>();
     private static final File[] EMPTY_FILE_ARRAY = new File[0];
@@ -19,13 +19,15 @@ public class LocalFileService {
      *
      * @return
      */
-    public List<FileComponent> listRoots() {
+    @Override
+    public List<FileComponent> listRoots(String sessionId) {
         return toFileComponents(File.listRoots());
     }
 
-    public List<FileComponent> listFilesByPath(String path) {
+    @Override
+    public List<FileComponent> listFilesByPath(String sessionId, String path) {
         File file = new File(path);
-        Assert.isTrue(file.exists(), "file path does not exists.");
+        Assert.isTrue(Objects.nonNull(file) && file.exists(), "file path does not exists.");
         if (file.isFile() || Optional.ofNullable(file.listFiles()).orElse(EMPTY_FILE_ARRAY).length == 0)
             return EMPTY_LIST;
         return toFileComponents(file.listFiles());
@@ -58,5 +60,12 @@ public class LocalFileService {
                     }
                 })
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public byte[] downloadFile(String sessionId, String path) throws IOException {
+        File file = new File(path);
+        Assert.isTrue(Objects.nonNull(file) && file.exists(), String.format("file [%s] does not exist!", path));
+        return new FileInputStream(file).readAllBytes();
     }
 }

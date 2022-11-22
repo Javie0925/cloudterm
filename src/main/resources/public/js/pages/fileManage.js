@@ -13,22 +13,19 @@ const templateText =
                 {{ d.name?d.name:d.absolutePath }}
             </h2>
             <div class="layui-colla-content">
-                {{#  if(d.directory && d.childNum > 0){ }}
+                {{#  if(d.directory){ }}
                     <div class="layui-collapse" id="{{ formatPath(d.absolutePath,'collapse') }}">
                         <div style="display: flex;justify-content: center" id="loading">
                             <img src="js/layui/css/modules/layer/default/loading-2.gif">
                         </div>
                     </div>
-                {{# }else if(d.directory){ }}
-                    <div class="layui-collapse" id="{{ formatPath(d.absolutePath,'collapse') }}">
-                    </div>
                 {{# }else{ }}
-                    <div class="row justify-content-around">
+                    <div class="row justify-content-between align-content-center ms-3">
                         <div class="col" style="margin-left:3%">{{ d.name }}</div>
-                        <div class="col">{{ new Date(d.lastModified).toJSON().replaceAll('T',' ').split('.')[0] }}</div>
-                        <div class="col">{{ formatSize(d.size) }}</div>
-                        <div class="col">
-                          <button type="button" class="layui-btn">Download</button>
+                        <div class="col-3">{{ new Date(d.lastModified).toJSON().replaceAll('T',' ').split('.')[0] }}</div>
+                        <div class="col-2">{{ formatSize(d.size) }}</div>
+                        <div class="col-2">
+                          <button type="button" class="layui-btn layui-btn-sm" data-path="{{ d.absolutePath }}" data-filename="{{ d.name }}" onclick="download(this)">Download</button>
                         </div>
                     </div>
                 {{# } }} 
@@ -44,7 +41,7 @@ layui.use(['table'], function () {
         skin: 'layui-skin-console'
     });
 
-    $.ajax("/localFile/listRoots", {
+    $.ajax("/file/listRoots" + parent.location.search, {
         success: function (res) {
             if (res.code == 0) {
                 let roots = eval(res.data);
@@ -84,13 +81,15 @@ function formatPath(path, suffix) {
         .replaceAll('.', '')
         .replaceAll(' ', '')
         .replaceAll('$', '')
+        .replaceAll('/', '')
+        .replaceAll('~', '')
         .concat(suffix ? ("_" + suffix) : '')
 }
 
 function expendDir(that) {
     if ($(that).data("loaded")) return
     let data = $(that).data("json")
-    $.ajax("/localFile/listFilesByPath", {
+    $.ajax("/file/listFilesByPath" + parent.location.search, {
         data: {
             path: data.absolutePath
         },
@@ -101,4 +100,18 @@ function expendDir(that) {
             }
         }
     })
+}
+
+function download(that) {
+    let path = $(that).data("path")
+    let filename = $(that).data("filename")
+    console.log(path)
+    if (!path) return
+    let search = '';
+    if (!parent.location.search) {
+        search = "?path=" + encodeURIComponent(path) + "&filename=" + encodeURIComponent(filename)
+    } else {
+        search = parent.location.search + "&path=" + encodeURIComponent(path) + "&filename=" + encodeURIComponent(filename)
+    }
+    window.open("/file/download" + search)
 }

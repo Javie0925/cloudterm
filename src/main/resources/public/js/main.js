@@ -97,11 +97,11 @@ $(() => {
 
 window.addEventListener('message', function (event) {
     try {
-        window.serverId = event.data.serverId;
+        window.sessionId = event.data.sessionId;
         if (event.data.newTab) {
-            window.open(location.origin + '/?serverId=' + serverId + "&name=" + event.data.name);
+            window.open(location.origin + '/?sessionId=' + sessionId + "&name=" + event.data.name);
         } else {
-            location.replace(location.origin + '/?serverId=' + serverId + "&name=" + event.data.name)
+            location.replace(location.origin + '/?sessionId=' + sessionId + "&name=" + event.data.name)
         }
     } catch (e) {
         console.log(e);

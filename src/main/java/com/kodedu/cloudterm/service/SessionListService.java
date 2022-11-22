@@ -1,9 +1,9 @@
 package com.kodedu.cloudterm.service;
 
 import com.jcraft.jsch.*;
-import com.kodedu.cloudterm.controller.vo.ServerVO;
-import com.kodedu.cloudterm.dao.ServerListDao;
-import com.kodedu.cloudterm.dao.entity.Server;
+import com.kodedu.cloudterm.controller.vo.SessionVO;
+import com.kodedu.cloudterm.dao.SessionListDao;
+import com.kodedu.cloudterm.dao.entity.SessionEntity;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -18,33 +18,33 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-public class ServerListService {
+public class SessionListService {
 
     @Resource
-    private ServerListDao serverListDao;
+    private SessionListDao serverListDao;
 
-    public List<ServerVO> getServerList() {
-        List<Server> serverList = serverListDao.getServerList();
-        List<ServerVO> result = serverList.stream()
+    public List<SessionVO> getServerList() {
+        List<SessionEntity> sessionEntityList = serverListDao.getServerList();
+        List<SessionVO> result = sessionEntityList.stream()
                 .map(s->{
-                    ServerVO serverVO = new ServerVO();
-                    BeanUtils.copyProperties(s,serverVO);
-                    return serverVO;
+                    SessionVO sessionVO = new SessionVO();
+                    BeanUtils.copyProperties(s, sessionVO);
+                    return sessionVO;
                 })
-                .sorted(Comparator.comparing(ServerVO::getName))
+                .sorted(Comparator.comparing(SessionVO::getName))
                 .collect(Collectors.toList());
         return result;
     }
 
-    public ServerVO getById(String id) {
-        Server server = serverListDao.findById(id);
-        ServerVO serverVO = new ServerVO();
-        BeanUtils.copyProperties(server, serverVO);
-        return serverVO;
+    public SessionVO getById(String id) {
+        SessionEntity sessionEntity = serverListDao.findById(id);
+        SessionVO sessionVO = new SessionVO();
+        BeanUtils.copyProperties(sessionEntity, sessionVO);
+        return sessionVO;
     }
 
-    public void upsert(Server server) {
-        serverListDao.upsert(server);
+    public void upsert(SessionEntity sessionEntity) {
+        serverListDao.upsert(sessionEntity);
     }
 
     public void delete(List<String> idList) {
@@ -52,9 +52,9 @@ public class ServerListService {
     }
 
     public void testConnection(String id){
-        Server server = serverListDao.findById(id);
+        SessionEntity server = serverListDao.findById(id);
         Assert.notNull(server,"server doesn't exist!");
-        Session session = null;
+        com.jcraft.jsch.Session session = null;
         Channel channel = null;
         try {
             session = new JSch().getSession(server.getUser(), server.getHost(), server.getPort());

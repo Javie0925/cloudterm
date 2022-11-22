@@ -2,7 +2,7 @@ package com.kodedu.cloudterm.dao;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-import com.kodedu.cloudterm.dao.entity.Server;
+import com.kodedu.cloudterm.dao.entity.SessionEntity;
 import com.kodedu.cloudterm.helper.DesUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
@@ -23,15 +23,15 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Repository
-public class ServerListDao {
+public class SessionListDao {
 
-    private static final String filePath = System.getProperty("serverList.filepath");
+    private static final String filePath = System.getProperty("sessionList.filepath");
 
-    private Map<String, Server> serverMap = new ConcurrentHashMap<>();
+    private Map<String, SessionEntity> sessionMap = new ConcurrentHashMap<>();
 
     private boolean hasFile = true;
 
-    private File serverListFile;
+    private File sessionListFile;
 
     private String desPassword = System.getProperty("des.password", "123456");
 
@@ -42,11 +42,11 @@ public class ServerListDao {
                 hasFile = false;
                 return;
             }
-            serverListFile = new File(filePath);
-            if (!serverListFile.exists()) {
-                serverListFile.createNewFile();
+            sessionListFile = new File(filePath);
+            if (!sessionListFile.exists()) {
+                sessionListFile.createNewFile();
             }
-            FileInputStream fileInputStream = new FileInputStream(serverListFile);
+            FileInputStream fileInputStream = new FileInputStream(sessionListFile);
             if (fileInputStream.available() > 0) {
                 byte[] bytes = new byte[fileInputStream.available()];
                 fileInputStream.read(bytes);
@@ -54,10 +54,10 @@ public class ServerListDao {
                 if (null == decryptBytes || decryptBytes.length == 0) {
                     throw new RuntimeException("The DES password may be wrong, please check it before restarting! ");
                 }
-                List<Server> serverList = JSON.parseObject(new String(DesUtil.decrypt(bytes, desPassword), StandardCharsets.UTF_8), new TypeReference<List<Server>>() {
+                List<SessionEntity> sessionEntityList = JSON.parseObject(new String(DesUtil.decrypt(bytes, desPassword), StandardCharsets.UTF_8), new TypeReference<List<SessionEntity>>() {
                 });
-                if (!CollectionUtils.isEmpty(serverList)) {
-                    serverList.stream().forEach(s -> serverMap.put(s.getId(), s));
+                if (!CollectionUtils.isEmpty(sessionEntityList)) {
+                    sessionEntityList.stream().forEach(s -> sessionMap.put(s.getId(), s));
                 }
             }
 
@@ -67,33 +67,33 @@ public class ServerListDao {
         }
     }
 
-    public Server findById(String id) {
-        if (serverMap.containsKey(id)) {
-            return serverMap.get(id);
+    public SessionEntity findById(String id) {
+        if (sessionMap.containsKey(id)) {
+            return sessionMap.get(id);
         }
         return null;
     }
 
-    public List<Server> getServerList() {
-        if (!serverMap.isEmpty()) {
-            return serverMap.entrySet().stream().map(en -> en.getValue()).collect(Collectors.toList());
+    public List<SessionEntity> getServerList() {
+        if (!sessionMap.isEmpty()) {
+            return sessionMap.entrySet().stream().map(en -> en.getValue()).collect(Collectors.toList());
         }
         return new ArrayList<>();
     }
 
-    public void upsert(Server server) {
-        if (StringUtils.hasLength(server.getId())) {
-            if (StringUtils.hasLength(server.getPasswd())) {
-                serverMap.put(server.getId(), server);
+    public void upsert(SessionEntity sessionEntity) {
+        if (StringUtils.hasLength(sessionEntity.getId())) {
+            if (StringUtils.hasLength(sessionEntity.getPasswd())) {
+                sessionMap.put(sessionEntity.getId(), sessionEntity);
             } else {
-                server.setPasswd(serverMap.get(server.getId()).getPasswd());
-                serverMap.put(server.getId(), server);
+                sessionEntity.setPasswd(sessionMap.get(sessionEntity.getId()).getPasswd());
+                sessionMap.put(sessionEntity.getId(), sessionEntity);
             }
         } else {
-            Assert.hasLength(server.getPasswd(), "password can not be empty!");
-            server.setId(UUID.randomUUID().toString().replaceAll("-", ""));
-            if (server.getPort() == 0) server.setPort(22);
-            serverMap.put(server.getId(), server);
+            Assert.hasLength(sessionEntity.getPasswd(), "password can not be empty!");
+            sessionEntity.setId(UUID.randomUUID().toString().replaceAll("-", ""));
+            if (sessionEntity.getPort() == 0) sessionEntity.setPort(22);
+            sessionMap.put(sessionEntity.getId(), sessionEntity);
         }
     }
 
@@ -101,8 +101,8 @@ public class ServerListDao {
     private synchronized void writeToFile() {
         if (!hasFile) return;
         try {
-            FileOutputStream fileOutputStream = new FileOutputStream(serverListFile);
-            List<Server> list = serverMap.entrySet().stream().map(en -> en.getValue()).collect(Collectors.toList());
+            FileOutputStream fileOutputStream = new FileOutputStream(sessionListFile);
+            List<SessionEntity> list = sessionMap.entrySet().stream().map(en -> en.getValue()).collect(Collectors.toList());
             fileOutputStream.write(DesUtil.encrypt(JSON.toJSONString(list).getBytes(StandardCharsets.UTF_8), desPassword));
             fileOutputStream.flush();
         } catch (IOException e) {
@@ -117,6 +117,6 @@ public class ServerListDao {
 
 
     public void delete(List<String> idList) {
-        idList.stream().forEach(id -> serverMap.remove(id));
+        idList.stream().forEach(id -> sessionMap.remove(id));
     }
 }

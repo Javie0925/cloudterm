@@ -2,8 +2,8 @@ package com.kodedu.cloudterm.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jcraft.jsch.*;
-import com.kodedu.cloudterm.dao.ServerListDao;
-import com.kodedu.cloudterm.dao.entity.Server;
+import com.kodedu.cloudterm.dao.SessionListDao;
+import com.kodedu.cloudterm.dao.entity.SessionEntity;
 import com.kodedu.cloudterm.helper.IOHelper;
 import com.kodedu.cloudterm.helper.ThreadHelper;
 import com.pty4j.PtyProcess;
@@ -34,7 +34,7 @@ public class TerminalService {
     private String shellStarter;
 
     @Resource
-    private ServerListDao serverListDao;
+    private SessionListDao serverListDao;
 
     private boolean isReady;
     private String[] termCommand;
@@ -45,9 +45,9 @@ public class TerminalService {
     private BufferedReader errorReader;
     private BufferedWriter outputWriter;
     private WebSocketSession webSocketSession;
-    private String serverId;
+    private String sessionId;
     private Channel jschChannel;
-    private Session jschSession;
+    private com.jcraft.jsch.Session jschSession;
 
     private LinkedBlockingQueue<String> commandQueue = new LinkedBlockingQueue<>();
 
@@ -63,9 +63,9 @@ public class TerminalService {
         if (isReady) {
             return;
         }
-        if (StringUtils.hasLength(serverId)) {
+        if (StringUtils.hasLength(sessionId)) {
             try {
-                initializeJschProcess(serverId);
+                initializeJschProcess(sessionId);
                 return;
             } catch (Exception e) {
                 print(e.getMessage() + System.lineSeparator());
@@ -112,12 +112,12 @@ public class TerminalService {
 
     }
 
-    private void initializeJschProcess(String serverId) throws JSchException, IOException {
-        Server server = serverListDao.findById(serverId);
-        Assert.notNull(server, "server is null");
+    private void initializeJschProcess(String sessionId) throws JSchException, IOException {
+        SessionEntity sessionEntity = serverListDao.findById(sessionId);
+        Assert.notNull(sessionEntity, "session is null!");
         JSch jsch = new JSch();
-        jschSession = jsch.getSession(server.getUser(), server.getHost(), server.getPort());
-        jschSession.setPassword(server.getPasswd());
+        jschSession = jsch.getSession(sessionEntity.getUser(), sessionEntity.getHost(), sessionEntity.getPort());
+        jschSession.setPassword(sessionEntity.getPasswd());
         jschSession.setConfig("StrictHostKeyChecking", "no");
         UserInfo userInfo = new UserInfo() {
             @Override
@@ -127,7 +127,7 @@ public class TerminalService {
 
             @Override
             public String getPassword() {
-                return server.getPasswd();
+                return sessionEntity.getPasswd();
             }
 
             @Override
@@ -235,12 +235,12 @@ public class TerminalService {
         }
     }
 
-    public void setWebSocketSession(WebSocketSession webSocketSession, String serverId) {
+    public void setWebSocketSession(WebSocketSession webSocketSession, String sessionId) {
         this.webSocketSession = webSocketSession;
-        if ("undefined".equals(serverId)) {
-            serverId = null;
+        if ("undefined".equals(sessionId)) {
+            sessionId = null;
         }
-        this.serverId = serverId;
+        this.sessionId = sessionId;
     }
 
     public WebSocketSession getWebSocketSession() {

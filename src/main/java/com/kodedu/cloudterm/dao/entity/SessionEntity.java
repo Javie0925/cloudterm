@@ -3,7 +3,7 @@ package com.kodedu.cloudterm.dao.entity;
 import lombok.Data;
 
 @Data
-public class Server {
+public class SessionEntity {
 
     private String id;
     private String name;

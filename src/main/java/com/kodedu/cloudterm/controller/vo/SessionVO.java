@@ -3,7 +3,7 @@ package com.kodedu.cloudterm.controller.vo;
 import lombok.Data;
 
 @Data
-public class ServerVO {
+public class SessionVO {
 
     private String id;
     private String name;

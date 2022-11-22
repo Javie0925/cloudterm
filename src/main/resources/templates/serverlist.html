@@ -236,13 +236,13 @@
             let data = obj.data;
             if (obj.event === 'thisTab') {
                 top.postMessage({
-                    serverId: data.id,
+                    sessionId: data.id,
                     name: data.name,
                     newTab: false
                 });
             } else if (obj.event === 'newTab') {
                 top.postMessage({
-                    serverId: data.id,
+                    sessionId: data.id,
                     name: data.name,
                     newTab: true
                 });
