@@ -4199,7 +4199,8 @@ layui.define("jquery", function (e) {
                     e.bar3 ? '<li class="layui-icon" id="layui_fixbar3" lay-type="' + (e.bar3.type ? e.bar3.type : 'bar3') + '" style="' + e.bgcolor + '" title="' + (e.bar3.title ? e.bar3.title : '') + '">' + (e.bar3.icon ? e.bar3.icon : c[2]) + "</li>" : "",
                     e.bar4 ? '<li class="layui-icon" id="layui_fixbar4" lay-type="' + (e.bar4.type ? e.bar4.type : 'bar4') + '" style="' + e.bgcolor + '" title="' + (e.bar4.title ? e.bar4.title : '') + '">' + (e.bar4.icon ? e.bar4.icon : c[3]) + "</li>" : "",
                     e.bar5 ? '<li class="layui-icon" id="layui_fixbar5" lay-type="' + (e.bar5.type ? e.bar5.type : 'bar5') + '" style="' + e.bgcolor + '" title="' + (e.bar5.title ? e.bar5.title : '') + '">' + (e.bar5.icon ? e.bar5.icon : c[4]) + "</li>" : "",
-                    '<li class="layui-icon ' + a + '" lay-type="top" style="' + e.bgcolor + '">' + c[5] + "</li>", "</ul>"
+                    !e.toTop ? '<li class="layui-icon ' + a + '" lay-type="top" style="' + e.bgcolor + '">' + c[5] + "</li>" : '',
+                    "</ul>"
                 ].join("")),
                 u = g.find("." + a), s = function () {
                     var t = o.scrollTop();
@@ -4541,7 +4542,8 @@ layui.define("layer", function (e) {
                         i++, d(e, t), u()
                     },
                     error: function () {
-                        n++, a.msg("\u8bf7\u6c42\u4e0a\u4f20\u63a5\u53e3\u51fa\u73b0\u5f02\u5e38"), m(e), u()
+                        //n++, a.msg("\u8bf7\u6c42\u4e0a\u4f20\u63a5\u53e3\u51fa\u73b0\u5f02\u5e38"), m(e), u()
+                        n++, console.log("Upload failed!"), m(e), u()
                     }
                 };
                 "function" == typeof l.progress && (c.xhr = function () {
@@ -4614,7 +4616,8 @@ layui.define("layer", function (e) {
                 default:
                     if (layui.each(v, function (e, t) {
                         RegExp("\\w\\.(" + (h || "jpg|png|gif|bmp|jpeg$") + ")", "i").test(escape(t)) || (n = !0)
-                    }), n) return a.msg("\u9009\u62e9\u7684\u56fe\u7247\u4e2d\u5305\u542b\u4e0d\u652f\u6301\u7684\u683c\u5f0f"), r.value = ""
+                    }), n) return a.msg("Upload failed!"), r.value = ""
+                //}), n) return a.msg("\u9009\u62e9\u7684\u56fe\u7247\u4e2d\u5305\u542b\u4e0d\u652f\u6301\u7684\u683c\u5f0f"), r.value = ""
             }
             if (a.fileLength = function () {
                 var t = 0, i = e || a.files || a.chooseFiles || r.files;

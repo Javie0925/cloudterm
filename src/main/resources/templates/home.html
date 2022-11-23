@@ -183,6 +183,7 @@
                 title: "clear",
                 type: "clear"
             }
+            , toTop : false
             , css: {right: 20, bottom: 50}
             , bgcolor: theme.bgColor
             , click: function (type) {
@@ -239,7 +240,7 @@
                 } else if (type === 'file') {
                     layer.open({
                         type: 2 //page
-                        , title: 'File Manage'
+                        , title: 'File Management'
                         , area: ['60%', '70%'] // [width,height]
                         , shade: [0.5, '#393D49']
                         , maxmin: true

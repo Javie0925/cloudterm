@@ -28,10 +28,85 @@
             border-color: var(--console-color);
             border: none;
         }
+
+        .layui-upload-drag {
+            background-color: var(--console-bg);
+            border-color: var(--console-color);
+        }
+
+        .layui-upload-choose {
+            color: #c15050;
+        }
+    </style>
+
+    <style>
+        .modal-header, .modal-body, .modal-content {
+            background-color: var(--console-bg);
+            color: var(--console-color);
+            border: none;
+        }
+
+        .layui-input, .layui-textarea {
+            background-color: var(--console-color);
+            color: var(--console-bg);
+            border: none;
+        }
+
     </style>
 
 </head>
 <body>
+<div class="modal fade" id="uploadModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow-lg">
+            <div class="modal-header">
+                <h5 class="modal-title"><strong>Upload File</strong></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row justify-content-center">
+                    <div class="layui-upload-drag" id="uploadDrag">
+                        <i class="layui-icon"></i>
+                        <p>click to upload, or drag file here</p>
+                        <div class="layui-hide" id="uploadDemoView">
+                            <hr>
+                            <img src="" alt="上传成功后渲染" style="max-width: 196px">
+                        </div>
+                    </div>
+                </div>
+                <form class="layui-form" action="" lay-filter="uploadForm">
+                    <div class="row layui-form-item mt-3">
+                        <label class="col-3 layui-form-label">Destination</label>
+                        <div class="col layui-input-block ms-0">
+                            <input id="destInput" class="layui-input" type="text" name="dest" lay-verify="required"/>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-input-block d-flex justify-content-center ms-0">
+                            <button id="uploadSubmit" lay-filter="uploadSubmit" type="button" class="layui-btn">
+                                <i class="layui-icon layui-icon-upload">Upload</i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="fileDestModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content shadow-lg">
+            <div class="modal-header">
+                <h5 class="modal-title"><strong>Select Upload Destination</strong></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="layui-collapse" id="file-dest-collapse-container"></div>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="layui-collapse" id="collapse-container" lay-accordion=""></div>
 <script>
 </script>

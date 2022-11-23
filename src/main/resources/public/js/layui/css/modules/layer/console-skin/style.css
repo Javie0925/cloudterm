@@ -37,3 +37,7 @@
 .layui-skin-console .layui-layer-btn .layui-layer-btn1 {
     background: #C9C5C5
 }
+.layui-skin-console-msg{
+    background-color: var(--console-front);
+    color: white;
+}

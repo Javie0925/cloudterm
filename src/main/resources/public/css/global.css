@@ -23,6 +23,7 @@
 :root {
     --console-bg: #2d2d2d;
     --console-color: #888;
+    --console-front: #C15050FF;
 }
 
 body {
