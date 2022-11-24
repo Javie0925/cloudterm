@@ -12,4 +12,5 @@ public class SessionEntity {
     private String passwd;
     private String user;
     private String note;
+    private String type = "jsch";
 }

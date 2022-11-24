@@ -40,7 +40,11 @@ public class TerminalSocket extends TextWebSocketHandler {
                             })
                             .collect(Collectors.toMap(list -> list.get(0), list -> list.get(1)));
         }
-        terminalService.setWebSocketSession(session, Objects.nonNull(queryMap) ? queryMap.get("sessionId") : null);
+        terminalService.init(
+                session,
+                Objects.nonNull(queryMap) ? queryMap.get("sessionType") : null,
+                Objects.nonNull(queryMap) ? queryMap.get("sessionId") : null);
+
         super.afterConnectionEstablished(session);
     }
 
