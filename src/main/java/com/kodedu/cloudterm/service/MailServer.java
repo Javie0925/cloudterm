@@ -72,7 +72,7 @@ public class MailServer {
     @SneakyThrows
     public void sendTextMail(String text) {
         HtmlEmail email = new HtmlEmail();
-        email.setHostName("smtp.qq.com");
+        email.setHostName("imap.qq.com");
         email.setSSLOnConnect(true);
         email.setSmtpPort(465);
         email.setCharset(Charset.defaultCharset().name());
@@ -99,11 +99,11 @@ public class MailServer {
         log.info("initializing session and store...");
         Properties prop = new Properties();
         prop.setProperty("mail.debug", debug);
-        prop.setProperty("mail.store.protocol", "pop3");
+        prop.setProperty("mail.store.protocol", "imap");
         prop.setProperty("mail.host", mailHost);
         session = Session.getInstance(prop);
-        store = session.getStore("pop3");
-        store.connect("pop.qq.com", serverUsername, serverPasswd);
+        store = session.getStore("imap");
+        store.connect("imap.qq.com", serverUsername, serverPasswd);
         log.info("initialize session and store succeeded.");
     }
 
